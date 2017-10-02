@@ -27,7 +27,7 @@
 #include "blasfeo/include/blasfeo_i_aux_ext_dep.h"
 
 #include "acados/ocp_nlp/allocate_ocp_nlp.h"
-#include "acados/ocp_nlp/ocp_nlp_gn_sqp.h"
+#include "acados/ocp_nlp/ocp_nlp_eh_sqp.h"
 #include "acados/ocp_qp/ocp_qp_common.h"
 #include "acados/sim/casadi_wrapper.h"
 #include "acados/sim/sim_common.h"
@@ -86,6 +86,8 @@ static void select_model(const int_t num_free_masses, sim_in *sim) {
             sim->VDE_forw = &vde_fun;
             sim->jac = &jac_chain_nm2;
             sim->jac_fun = &jac_fun;
+            sim->VDE_hess = &vde_hess_fun;
+            sim->vde_hess = hess_chain_nm2;
             break;
         case 2:
             sim->vde = &vde_chain_nm3;
@@ -110,7 +112,7 @@ int main() {
     // TODO(dimitris): fix for NMF > 1
     enum sensitivities_scheme scheme = EXACT_NEWTON;
     const int NMF = 1;
-    const int d = 2;
+    const int d = 0;
     print_problem_info(scheme, NMF, d);
 
     // Dimensions
@@ -177,8 +179,8 @@ int main() {
         nlp->sim[jj].in->nu = NU;
 
         nlp->sim[jj].in->sens_forw = true;
-        nlp->sim[jj].in->sens_adj = false;
-        nlp->sim[jj].in->sens_hess = false;
+        nlp->sim[jj].in->sens_adj = true;
+        nlp->sim[jj].in->sens_hess = true;
         nlp->sim[jj].in->num_forw_sens = NX + NU;
 
         select_model(NMF, nlp->sim[jj].in);
@@ -242,19 +244,19 @@ int main() {
     ocp_nlp_out *nlp_out = (ocp_nlp_out *) malloc(sizeof(ocp_nlp_out));
     allocate_ocp_nlp_out(nlp, nlp_out);
 
-    ocp_nlp_gn_sqp_args *nlp_args = (ocp_nlp_gn_sqp_args *) malloc(sizeof(ocp_nlp_gn_sqp_args));
+    ocp_nlp_eh_sqp_args *nlp_args = (ocp_nlp_eh_sqp_args *) malloc(sizeof(ocp_nlp_eh_sqp_args));
     ocp_nlp_args *nlp_common_args = (ocp_nlp_args *) malloc(sizeof(ocp_nlp_args));
     nlp_args->common = nlp_common_args;
-    nlp_args->common->maxIter = 50;
+    nlp_args->common->maxIter = 1;
     snprintf(nlp_args->qp_solver_name, sizeof(nlp_args->qp_solver_name), "%s",
              "condensing_qpoases");
 
-    ocp_nlp_gn_sqp_memory *nlp_mem = (ocp_nlp_gn_sqp_memory *) malloc(sizeof(ocp_nlp_gn_sqp_memory));
+    ocp_nlp_eh_sqp_memory *nlp_mem = (ocp_nlp_eh_sqp_memory *) malloc(sizeof(ocp_nlp_eh_sqp_memory));
     ocp_nlp_memory *nlp_mem_common = (ocp_nlp_memory *) malloc(sizeof(ocp_nlp_memory));
     nlp_mem->common = nlp_mem_common;
-    ocp_nlp_gn_sqp_create_memory(nlp, nlp_args, nlp_mem);
+    ocp_nlp_eh_sqp_create_memory(nlp, nlp_args, nlp_mem);
 
-    int_t work_space_size = ocp_nlp_gn_sqp_calculate_workspace_size(nlp, nlp_args);
+    int_t work_space_size = ocp_nlp_eh_sqp_calculate_workspace_size(nlp, nlp_args);
     void *nlp_work = (void *) malloc(work_space_size);
 
     // Initial guess
@@ -267,7 +269,7 @@ int main() {
     for (int_t j = 0; j < NX; j++)
         nlp_mem->common->x[NN][j] = xref[j];  // resX(j, NN)
 
-    int_t status = ocp_nlp_gn_sqp(nlp, nlp_out, nlp_args, nlp_mem, nlp_work);
+    int_t status = ocp_nlp_eh_sqp(nlp, nlp_out, nlp_args, nlp_mem, nlp_work);
     printf("\n\nstatus = %i\n\n", status);
 
     for (int_t k = 0; k < 3; k++) {

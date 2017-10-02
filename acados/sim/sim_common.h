@@ -41,9 +41,12 @@ typedef struct {
 
     casadi_function_t vde;
     void (*VDE_forw)(const int_t, const int_t, const real_t *, real_t *, casadi_function_t);
-    void (*VDE_adj)(const real_t *, real_t *);
     casadi_function_t jac;
     void (*jac_fun)(const int_t, const real_t *, real_t *, casadi_function_t);
+    casadi_function_t vde_hess;
+    void (*VDE_hess)(const int_t, const int_t, const real_t *, real_t *, casadi_function_t);
+    casadi_function_t vde_adj;
+    void (*VDE_adj)(const int_t, const real_t *, const real_t *, casadi_function_t);
 
     real_t step;
     uint num_steps;
