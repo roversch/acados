@@ -171,8 +171,8 @@ void set_model(sim_in *sim, casadi::Function& f, double step, enum generation_mo
         void *jac_handle = malloc(sizeof(void *));
         sim->jac = compile_and_load(jac_name, &jac_handle);
     }
-    sim->VDE_forw = &vde_fun;
-    sim->jac_fun = &jac_fun;
+    sim->forward_vde_wrapper = &vde_fun;
+    sim->jacobian_wrapper = &jac_fun;
     sim->step = step;
 }
 
@@ -535,7 +535,7 @@ real_t **ocp_nlp_in_ls_cost_matrix_get(ocp_nlp_in *nlp) {
         eval_t eval = (eval_t)dlsym(global_handle, model_name.c_str());
         for (int_t i = 0; i < $self->N; i++) {
             $self->sim[i].in->vde = eval;
-            $self->sim[i].in->VDE_forw = &vde_fun;
+            $self->sim[i].in->forward_vde_wrapper = &vde_fun;
             $self->sim[i].in->step = step;
         }
     }

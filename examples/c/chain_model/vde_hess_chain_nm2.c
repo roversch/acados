@@ -9,7 +9,7 @@ extern "C" {
   #define _NAMESPACE_CONCAT(NS, ID) NS ## ID
   #define CASADI_PREFIX(ID) NAMESPACE_CONCAT(CODEGEN_PREFIX, ID)
 #else /* CODEGEN_PREFIX */
-  #define CASADI_PREFIX(ID) vde_chain_nm2_ ## ID
+  #define CASADI_PREFIX(ID) vde_hess_chain_nm2_ ## ID
 #endif /* CODEGEN_PREFIX */
 
 #include <math.h>
@@ -57,159 +57,129 @@ static const int CASADI_PREFIX(s2)[24] = {6, 3, 0, 6, 12, 18, 0, 1, 2, 3, 4, 5, 
 #define s2 CASADI_PREFIX(s2)
 static const int CASADI_PREFIX(s3)[7] = {3, 1, 0, 3, 0, 1, 2};
 #define s3 CASADI_PREFIX(s3)
-/* vde_chain_nm2 */
-CASADI_SYMBOL_EXPORT int vde_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, int mem) {
-  real_t a0=arg[0] ? arg[0][3] : 0;
+static const int CASADI_PREFIX(s4)[13] = {9, 1, 0, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8};
+#define s4 CASADI_PREFIX(s4)
+static const int CASADI_PREFIX(s5)[49] = {45, 1, 0, 45, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+#define s5 CASADI_PREFIX(s5)
+/* vde_hess_chain_nm2 */
+CASADI_SYMBOL_EXPORT int vde_hess_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, int mem) {
+  real_t a0=0.;
   if (res[0]!=0) res[0][0]=a0;
-  a0=arg[0] ? arg[0][4] : 0;
   if (res[0]!=0) res[0][1]=a0;
-  a0=arg[0] ? arg[0][5] : 0;
   if (res[0]!=0) res[0][2]=a0;
-  a0=arg[3] ? arg[3][0] : 0;
-  if (res[0]!=0) res[0][3]=a0;
-  a0=arg[3] ? arg[3][1] : 0;
-  if (res[0]!=0) res[0][4]=a0;
-  a0=arg[3] ? arg[3][2] : 0;
-  if (res[0]!=0) res[0][5]=a0;
-  a0=arg[1] ? arg[1][3] : 0;
+  real_t a1=arg[3] ? arg[3][0] : 0;
+  if (res[0]!=0) res[0][3]=a1;
+  a1=arg[3] ? arg[3][1] : 0;
+  if (res[0]!=0) res[0][4]=a1;
+  a1=arg[3] ? arg[3][2] : 0;
+  if (res[0]!=0) res[0][5]=a1;
+  a1=arg[3] ? arg[3][3] : 0;
+  if (res[0]!=0) res[0][6]=a1;
+  a1=arg[3] ? arg[3][4] : 0;
+  if (res[0]!=0) res[0][7]=a1;
+  a1=arg[3] ? arg[3][5] : 0;
+  if (res[0]!=0) res[0][8]=a1;
   if (res[1]!=0) res[1][0]=a0;
-  a0=arg[1] ? arg[1][4] : 0;
   if (res[1]!=0) res[1][1]=a0;
-  a0=arg[1] ? arg[1][5] : 0;
   if (res[1]!=0) res[1][2]=a0;
-  a0=0.;
   if (res[1]!=0) res[1][3]=a0;
   if (res[1]!=0) res[1][4]=a0;
   if (res[1]!=0) res[1][5]=a0;
-  real_t a1=arg[1] ? arg[1][9] : 0;
-  if (res[1]!=0) res[1][6]=a1;
-  a1=arg[1] ? arg[1][10] : 0;
-  if (res[1]!=0) res[1][7]=a1;
-  a1=arg[1] ? arg[1][11] : 0;
-  if (res[1]!=0) res[1][8]=a1;
+  if (res[1]!=0) res[1][6]=a0;
+  if (res[1]!=0) res[1][7]=a0;
+  if (res[1]!=0) res[1][8]=a0;
   if (res[1]!=0) res[1][9]=a0;
   if (res[1]!=0) res[1][10]=a0;
   if (res[1]!=0) res[1][11]=a0;
-  a1=arg[1] ? arg[1][15] : 0;
-  if (res[1]!=0) res[1][12]=a1;
-  a1=arg[1] ? arg[1][16] : 0;
-  if (res[1]!=0) res[1][13]=a1;
-  a1=arg[1] ? arg[1][17] : 0;
-  if (res[1]!=0) res[1][14]=a1;
+  if (res[1]!=0) res[1][12]=a0;
+  if (res[1]!=0) res[1][13]=a0;
+  if (res[1]!=0) res[1][14]=a0;
   if (res[1]!=0) res[1][15]=a0;
   if (res[1]!=0) res[1][16]=a0;
   if (res[1]!=0) res[1][17]=a0;
-  a1=arg[1] ? arg[1][21] : 0;
-  if (res[1]!=0) res[1][18]=a1;
-  a1=arg[1] ? arg[1][22] : 0;
-  if (res[1]!=0) res[1][19]=a1;
-  a1=arg[1] ? arg[1][23] : 0;
-  if (res[1]!=0) res[1][20]=a1;
+  if (res[1]!=0) res[1][18]=a0;
+  if (res[1]!=0) res[1][19]=a0;
+  if (res[1]!=0) res[1][20]=a0;
   if (res[1]!=0) res[1][21]=a0;
   if (res[1]!=0) res[1][22]=a0;
   if (res[1]!=0) res[1][23]=a0;
-  a1=arg[1] ? arg[1][27] : 0;
-  if (res[1]!=0) res[1][24]=a1;
-  a1=arg[1] ? arg[1][28] : 0;
-  if (res[1]!=0) res[1][25]=a1;
-  a1=arg[1] ? arg[1][29] : 0;
-  if (res[1]!=0) res[1][26]=a1;
+  if (res[1]!=0) res[1][24]=a0;
+  if (res[1]!=0) res[1][25]=a0;
+  if (res[1]!=0) res[1][26]=a0;
   if (res[1]!=0) res[1][27]=a0;
   if (res[1]!=0) res[1][28]=a0;
   if (res[1]!=0) res[1][29]=a0;
-  a1=arg[1] ? arg[1][33] : 0;
-  if (res[1]!=0) res[1][30]=a1;
-  a1=arg[1] ? arg[1][34] : 0;
-  if (res[1]!=0) res[1][31]=a1;
-  a1=arg[1] ? arg[1][35] : 0;
-  if (res[1]!=0) res[1][32]=a1;
+  if (res[1]!=0) res[1][30]=a0;
+  if (res[1]!=0) res[1][31]=a0;
+  if (res[1]!=0) res[1][32]=a0;
   if (res[1]!=0) res[1][33]=a0;
   if (res[1]!=0) res[1][34]=a0;
   if (res[1]!=0) res[1][35]=a0;
-  a1=arg[2] ? arg[2][3] : 0;
-  if (res[2]!=0) res[2][0]=a1;
-  a1=arg[2] ? arg[2][4] : 0;
-  if (res[2]!=0) res[2][1]=a1;
-  a1=arg[2] ? arg[2][5] : 0;
-  if (res[2]!=0) res[2][2]=a1;
-  a1=1.;
-  if (res[2]!=0) res[2][3]=a1;
-  if (res[2]!=0) res[2][4]=a0;
-  if (res[2]!=0) res[2][5]=a0;
-  real_t a2=arg[2] ? arg[2][9] : 0;
-  if (res[2]!=0) res[2][6]=a2;
-  a2=arg[2] ? arg[2][10] : 0;
-  if (res[2]!=0) res[2][7]=a2;
-  a2=arg[2] ? arg[2][11] : 0;
-  if (res[2]!=0) res[2][8]=a2;
-  if (res[2]!=0) res[2][9]=a0;
-  if (res[2]!=0) res[2][10]=a1;
-  if (res[2]!=0) res[2][11]=a0;
-  a2=arg[2] ? arg[2][15] : 0;
-  if (res[2]!=0) res[2][12]=a2;
-  a2=arg[2] ? arg[2][16] : 0;
-  if (res[2]!=0) res[2][13]=a2;
-  a2=arg[2] ? arg[2][17] : 0;
-  if (res[2]!=0) res[2][14]=a2;
-  if (res[2]!=0) res[2][15]=a0;
-  if (res[2]!=0) res[2][16]=a0;
-  if (res[2]!=0) res[2][17]=a1;
+  if (res[1]!=0) res[1][36]=a0;
+  if (res[1]!=0) res[1][37]=a0;
+  if (res[1]!=0) res[1][38]=a0;
+  if (res[1]!=0) res[1][39]=a0;
+  if (res[1]!=0) res[1][40]=a0;
+  if (res[1]!=0) res[1][41]=a0;
+  if (res[1]!=0) res[1][42]=a0;
+  if (res[1]!=0) res[1][43]=a0;
+  if (res[1]!=0) res[1][44]=a0;
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT void vde_chain_nm2_incref(void) {
+CASADI_SYMBOL_EXPORT void vde_hess_chain_nm2_incref(void) {
 }
 
-CASADI_SYMBOL_EXPORT void vde_chain_nm2_decref(void) {
+CASADI_SYMBOL_EXPORT void vde_hess_chain_nm2_decref(void) {
 }
 
-CASADI_SYMBOL_EXPORT int vde_chain_nm2_n_in(void) { return 4;}
+CASADI_SYMBOL_EXPORT int vde_hess_chain_nm2_n_in(void) { return 5;}
 
-CASADI_SYMBOL_EXPORT int vde_chain_nm2_n_out(void) { return 3;}
+CASADI_SYMBOL_EXPORT int vde_hess_chain_nm2_n_out(void) { return 2;}
 
-CASADI_SYMBOL_EXPORT const char* vde_chain_nm2_name_in(int i){
+CASADI_SYMBOL_EXPORT const char* vde_hess_chain_nm2_name_in(int i){
   switch (i) {
     case 0: return "i0";
     case 1: return "i1";
     case 2: return "i2";
     case 3: return "i3";
+    case 4: return "i4";
     default: return 0;
   }
 }
 
-CASADI_SYMBOL_EXPORT const char* vde_chain_nm2_name_out(int i){
+CASADI_SYMBOL_EXPORT const char* vde_hess_chain_nm2_name_out(int i){
   switch (i) {
     case 0: return "o0";
     case 1: return "o1";
-    case 2: return "o2";
     default: return 0;
   }
 }
 
-CASADI_SYMBOL_EXPORT const int* vde_chain_nm2_sparsity_in(int i) {
+CASADI_SYMBOL_EXPORT const int* vde_hess_chain_nm2_sparsity_in(int i) {
   switch (i) {
     case 0: return s0;
     case 1: return s1;
     case 2: return s2;
-    case 3: return s3;
+    case 3: return s0;
+    case 4: return s3;
     default: return 0;
   }
 }
 
-CASADI_SYMBOL_EXPORT const int* vde_chain_nm2_sparsity_out(int i) {
+CASADI_SYMBOL_EXPORT const int* vde_hess_chain_nm2_sparsity_out(int i) {
   switch (i) {
-    case 0: return s0;
-    case 1: return s1;
-    case 2: return s2;
+    case 0: return s4;
+    case 1: return s5;
     default: return 0;
   }
 }
 
-CASADI_SYMBOL_EXPORT int vde_chain_nm2_work(int *sz_arg, int* sz_res, int *sz_iw, int *sz_w) {
-  if (sz_arg) *sz_arg = 4;
-  if (sz_res) *sz_res = 3;
+CASADI_SYMBOL_EXPORT int vde_hess_chain_nm2_work(int *sz_arg, int* sz_res, int *sz_iw, int *sz_w) {
+  if (sz_arg) *sz_arg = 5;
+  if (sz_res) *sz_res = 2;
   if (sz_iw) *sz_iw = 0;
-  if (sz_w) *sz_w = 3;
+  if (sz_w) *sz_w = 2;
   return 0;
 }
 

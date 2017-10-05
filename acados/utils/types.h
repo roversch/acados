@@ -20,6 +20,7 @@
 #ifndef ACADOS_UTILS_TYPES_H_
 #define ACADOS_UTILS_TYPES_H_
 
+#define ACADOS_EPS 1e-12
 #define MAX_STR_LEN 256
 
 typedef double real_t;

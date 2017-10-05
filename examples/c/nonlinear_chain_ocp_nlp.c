@@ -38,8 +38,6 @@
 #include "acados/utils/types.h"
 #include "examples/c/chain_model/chain_model.h"
 
-real_t COMPARISON_TOLERANCE_IPOPT = 1e-6;
-
 #define NN 15
 #define TT 3.0
 #define Ns 2
@@ -83,23 +81,27 @@ static void select_model(const int_t num_free_masses, sim_in *sim) {
     switch (num_free_masses) {
         case 1:
             sim->vde = &vde_chain_nm2;
-            sim->VDE_forw = &vde_fun;
+            sim->forward_vde_wrapper = &vde_fun;
             sim->jac = &jac_chain_nm2;
-            sim->jac_fun = &jac_fun;
-            sim->VDE_hess = &vde_hess_fun;
-            sim->vde_hess = hess_chain_nm2;
+            sim->jacobian_wrapper = &jac_fun;
+            sim->vde_adj = &vde_hess_chain_nm2;
+            sim->adjoint_vde_wrapper = &vde_hess_fun;
             break;
         case 2:
             sim->vde = &vde_chain_nm3;
-            sim->VDE_forw = &vde_fun;
+            sim->forward_vde_wrapper = &vde_fun;
             sim->jac = &jac_chain_nm3;
-            sim->jac_fun = &jac_fun;
+            sim->jacobian_wrapper = &jac_fun;
+            sim->vde_adj = &vde_hess_chain_nm3;
+            sim->adjoint_vde_wrapper = &vde_hess_fun;
             break;
         case 3:
             sim->vde = &vde_chain_nm4;
-            sim->VDE_forw = &vde_fun;
+            sim->forward_vde_wrapper = &vde_fun;
             sim->jac = &jac_chain_nm4;
-            sim->jac_fun = &jac_fun;
+            sim->jacobian_wrapper = &jac_fun;
+            sim->vde_adj = &vde_hess_chain_nm4;
+            sim->adjoint_vde_wrapper = &vde_hess_fun;
             break;
         default:
             printf("Problem size not available");
@@ -108,10 +110,76 @@ static void select_model(const int_t num_free_masses, sim_in *sim) {
     }
 }
 
+void read_initial_state(const int_t nx, const int_t num_free_masses, real_t *x0) {
+    FILE *initial_states_file;
+    switch (num_free_masses) {
+        case 1:
+            initial_states_file = fopen(X0_NM2_FILE, "r");
+            break;
+        case 2:
+            initial_states_file = fopen(X0_NM3_FILE, "r");
+            break;
+        case 3:
+            initial_states_file = fopen(X0_NM4_FILE, "r");
+            break;
+        case 4:
+            initial_states_file = fopen(X0_NM5_FILE, "r");
+            break;
+        case 5:
+            initial_states_file = fopen(X0_NM6_FILE, "r");
+            break;
+        case 6:
+            initial_states_file = fopen(X0_NM7_FILE, "r");
+            break;
+        case 7:
+            initial_states_file = fopen(X0_NM8_FILE, "r");
+            break;
+        default:
+            initial_states_file = fopen(X0_NM9_FILE, "r");
+            break;
+    }
+    for (int_t i = 0; i < nx; i++)
+        fscanf(initial_states_file, "%lf", &x0[i]);
+    fclose(initial_states_file);
+}
+
+void read_final_state(const int_t nx, const int_t num_free_masses, real_t *xN) {
+    FILE *final_state_file;
+    switch (num_free_masses) {
+        case 1:
+            final_state_file = fopen(XN_NM2_FILE, "r");
+            break;
+        case 2:
+            final_state_file = fopen(XN_NM3_FILE, "r");
+            break;
+        case 3:
+            final_state_file = fopen(XN_NM4_FILE, "r");
+            break;
+        case 4:
+            final_state_file = fopen(XN_NM5_FILE, "r");
+            break;
+        case 5:
+            final_state_file = fopen(XN_NM6_FILE, "r");
+            break;
+        case 6:
+            final_state_file = fopen(XN_NM7_FILE, "r");
+            break;
+        case 7:
+            final_state_file = fopen(XN_NM8_FILE, "r");
+            break;
+        default:
+            final_state_file = fopen(XN_NM9_FILE, "r");
+            break;
+    }
+    for (int_t i = 0; i < nx; i++)
+        fscanf(final_state_file, "%lf", &xN[i]);
+    fclose(final_state_file);
+}
+
 int main() {
     // TODO(dimitris): fix for NMF > 1
     enum sensitivities_scheme scheme = EXACT_NEWTON;
-    const int NMF = 1;
+    const int NMF = 2;
     const int d = 0;
     print_problem_info(scheme, NMF, d);
 
@@ -136,14 +204,26 @@ int main() {
     // Problem data
     real_t wall_pos = -0.01;
     real_t UMAX = 10;
-    const real_t lb0[9] = {0.0, 1.5, 0.5, 0.0, 0.0, 0.0, -UMAX, -UMAX, -UMAX};
-    const real_t ub0[9] = {0.0, 1.5, 0.5, 0.0, 0.0, 0.0, +UMAX, +UMAX, +UMAX};
-    const real_t lb[4] = {wall_pos, -UMAX, -UMAX, -UMAX};
-    const real_t ub[4] = {1e12, +UMAX, +UMAX, +UMAX};
-    real_t xref[6] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    real_t lb0[NX+NU], ub0[NX+NU];
+    read_initial_state(NX, NMF, lb0);
+    read_initial_state(NX, NMF, ub0);
+    for (int_t i = NX; i < NX+NU; i++) {
+        lb0[i] = -UMAX;
+        ub0[i] = +UMAX;
+    }
+    real_t lb[NMF+NU], ub[NMF+NU];
+    real_t xref[NX];
+    read_final_state(NX, NMF, xref);
     real_t uref[3] = {0.0, 0.0, 0.0};
-    real_t diag_cost_x[6] = {1e-2, 1e-2, 1e-2, 1e-2, 1e-2, 1e-2};
+    real_t diag_cost_x[NX];
+    for (int_t i = 0; i < NX; i++)
+        diag_cost_x[i] = 1e-2;
     real_t diag_cost_u[3] = {1.0, 1.0, 1.0};
+    real_t x_pos_inf[NX], x_neg_inf[NX];
+    for (int_t i = 0; i < NX; i++) {
+        x_pos_inf[i] = +1e4;
+        x_neg_inf[i] = -1e4;
+    }
 
     ocp_nlp_in *nlp;
     nlp = (ocp_nlp_in *) malloc(sizeof(ocp_nlp_in));
@@ -231,15 +311,23 @@ int main() {
         idxb_N[i] = i;
     nlp->lb[0] = lb0;
     nlp->ub[0] = ub0;
-    nlp->idxb[0] = (const int_t *) idxb_0;
+    nlp->idxb[0] = idxb_0;
+    for (int_t j = 0; j < NMF; j++) {
+        lb[j] = wall_pos;  // wall position
+        ub[j] = 1e4;
+    }
+    for (int_t j = 0; j < NU; j++) {
+        lb[NMF+j] = -UMAX;  // umin
+        ub[NMF+j] = +UMAX;  // umax
+    }
     for (int_t i = 1; i < NN; i++) {
         nlp->lb[i] = lb;
         nlp->ub[i] = ub;
-        nlp->idxb[i] = (const int_t *) idxb_1;
+        nlp->idxb[i] = idxb_1;
     }
-    nlp->lb[NN] = xref;
-    nlp->ub[NN] = xref;
-    nlp->idxb[NN] = (const int_t *) idxb_N;
+    nlp->lb[NN] = x_neg_inf;
+    nlp->ub[NN] = x_pos_inf;
+    nlp->idxb[NN] = idxb_N;
 
     ocp_nlp_out *nlp_out = (ocp_nlp_out *) malloc(sizeof(ocp_nlp_out));
     allocate_ocp_nlp_out(nlp, nlp_out);
@@ -247,9 +335,8 @@ int main() {
     ocp_nlp_eh_sqp_args *nlp_args = (ocp_nlp_eh_sqp_args *) malloc(sizeof(ocp_nlp_eh_sqp_args));
     ocp_nlp_args *nlp_common_args = (ocp_nlp_args *) malloc(sizeof(ocp_nlp_args));
     nlp_args->common = nlp_common_args;
-    nlp_args->common->maxIter = 1;
-    snprintf(nlp_args->qp_solver_name, sizeof(nlp_args->qp_solver_name), "%s",
-             "condensing_qpoases");
+    nlp_args->common->maxIter = 100;
+    snprintf(nlp_args->qp_solver_name, sizeof(nlp_args->qp_solver_name), "%s", "hpipm");
 
     ocp_nlp_eh_sqp_memory *nlp_mem = (ocp_nlp_eh_sqp_memory *) malloc(sizeof(ocp_nlp_eh_sqp_memory));
     ocp_nlp_memory *nlp_mem_common = (ocp_nlp_memory *) malloc(sizeof(ocp_nlp_memory));
@@ -262,17 +349,17 @@ int main() {
     // Initial guess
     for (int_t i = 0; i < NN; i++) {
         for (int_t j = 0; j < NX; j++)
-            nlp_mem->common->x[i][j] = xref[j];  // resX(j,i)
+            nlp_mem->common->x[i][j] = xref[j];
         for (int_t j = 0; j < NU; j++)
-            nlp_mem->common->u[i][j] = 0.0;  // resU(j, i)
+            nlp_mem->common->u[i][j] = 0.0;
     }
     for (int_t j = 0; j < NX; j++)
-        nlp_mem->common->x[NN][j] = xref[j];  // resX(j, NN)
+        nlp_mem->common->x[NN][j] = xref[j];
 
     int_t status = ocp_nlp_eh_sqp(nlp, nlp_out, nlp_args, nlp_mem, nlp_work);
     printf("\n\nstatus = %i\n\n", status);
 
-    for (int_t k = 0; k < 3; k++) {
+    for (int_t k = 0; k <= NN; k++) {
         char states_name[MAX_STR_LEN], controls_name[MAX_STR_LEN];
         snprintf(states_name, sizeof(states_name), "x%d", k);
         print_matrix_name("stdout", states_name, nlp_out->x[k], 1, nx[k]);

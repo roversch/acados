@@ -20,6 +20,10 @@
 #ifndef ACADOS_UTILS_COPY_H_
 #define ACADOS_UTILS_COPY_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "acados/utils/types.h"
 
 void copy_real_matrix_sequence(
@@ -35,5 +39,9 @@ void copy_int_matrix_sequence(
     const int_t *matrix_num_cols,
     const int_t **source,
     int_t **destination);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif  // ACADOS_UTILS_COPY_H_

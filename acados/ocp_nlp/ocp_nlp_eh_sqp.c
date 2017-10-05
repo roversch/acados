@@ -27,6 +27,7 @@
 #include "acados/ocp_qp/ocp_qp_common.h"
 #include "acados/ocp_nlp/ocp_nlp_common.h"
 #include "acados/sim/sim_common.h"
+#include "acados/utils/math.h"
 #include "acados/utils/print.h"
 #include "acados/utils/timing.h"
 #include "acados/utils/types.h"
@@ -134,8 +135,6 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
         // Pass state and control to integrator
         for (int_t j = 0; j < nx[i]; j++) sim[i].in->x[j] = w[w_idx+j];
         for (int_t j = 0; j < nu[i]; j++) sim[i].in->u[j] = w[w_idx+nx[i]+j];
-        for (int_t j = 0; j < nx[i]; j++) sim[i].in->S_adj[j] = 1.0;
-        for (int_t j = 0; j < nu[i]; j++) sim[i].in->S_adj[nx[i]+j] = 0.0;
         sim[i].fun(sim[i].in, sim[i].out, sim[i].args, sim[i].mem, sim[i].work);
 
         // TODO(rien): transition functions for changing dimensions not yet implemented!
@@ -150,18 +149,8 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
 
         // Update bounds:
         for (int_t j = 0; j < nlp->nb[i]; j++) {
-#ifdef FLIP_BOUNDS
-            if (nlp->idxb[i][j] < nu[i]) {
-                qp_lb[i][j] = nlp->lb[i][j] - w[w_idx + nx[i] + nlp->idxb[i][j]];
-                qp_ub[i][j] = nlp->ub[i][j] - w[w_idx + nx[i] + nlp->idxb[i][j]];
-            } else {
-                qp_lb[i][j] = nlp->lb[i][j] - w[w_idx - nu[i] + nlp->idxb[i][j]];
-                qp_ub[i][j] = nlp->ub[i][j] - w[w_idx - nu[i] + nlp->idxb[i][j]];
-            }
-#else
             qp_lb[i][j] = nlp->lb[i][j] - w[w_idx+nlp->idxb[i][j]];
             qp_ub[i][j] = nlp->ub[i][j] - w[w_idx+nlp->idxb[i][j]];
-#endif
         }
 
         // Update gradients
@@ -189,9 +178,6 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
                 hess_index++;
             }
         }
-        printf("------ stage %d ------\n", i);
-        print_matrix_name("stdout", "Q", qp_Q[i], nx[i], nx[i]);
-        print_matrix_name("stdout", "S", qp_S[i], nu[i], nx[i]);
         for (int_t j = 0; j < nx[i]; j++) {
             qp_q[i][j] = 0;
             for (int_t k = 0; k < nx[i]; k++)
@@ -209,8 +195,6 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
                 hess_index++;
             }
         }
-        print_matrix_name("stdout", "R", qp_R[i], nu[i], nu[i]);
-        printf("---------------------\n");
         for (int_t j = 0; j < nu[i]; j++) {
             qp_r[i][j] = 0;
             for (int_t k = 0; k < nx[i]; k++)
@@ -225,19 +209,13 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
     }
 
     for (int_t j = 0; j < nlp->nb[N]; j++) {
-#ifdef FLIP_BOUNDS
-        if (nlp->idxb[N][j] < nu[N]) {
-            qp_lb[N][j] = nlp->lb[N][j] - w[w_idx + nx[N] + nlp->idxb[N][j]];
-            qp_ub[N][j] = nlp->ub[N][j] - w[w_idx + nx[N] + nlp->idxb[N][j]];
-        } else {
-            qp_lb[N][j] = nlp->lb[N][j] - w[w_idx - nu[N] + nlp->idxb[N][j]];
-            qp_ub[N][j] = nlp->ub[N][j] - w[w_idx - nu[N] + nlp->idxb[N][j]];
-        }
-#else
         qp_lb[N][j] = nlp->lb[N][j] - w[w_idx+nlp->idxb[N][j]];
         qp_ub[N][j] = nlp->ub[N][j] - w[w_idx+nlp->idxb[N][j]];
-#endif
     }
+
+    for (int_t j = 0; j < nx[N]; j++)
+        for (int_t k = 0; k < nx[N]; k++)
+            qp_Q[N][j*nx[N] + k] = cost->W[N][j*(nx[N]+nu[N]) + k];
 
     for (int_t j = 0; j < nx[N]; j++)
         qp_q[N][j] = cost->W[N][j*(nx[N]+nu[N]+1)]*(w[w_idx+j]-y_ref[N][j]);
@@ -287,6 +265,46 @@ static void store_trajectories(const ocp_nlp_in *nlp, ocp_nlp_memory *memory, oc
     }
 }
 
+static void QSR_to_matrix(int_t nx, int_t nu, const real_t *Q, const real_t *S, const real_t *R,
+                          real_t *matrix) {
+    for (int_t i = 0; i < nx; i++)
+        for (int_t j = 0; j < nx; j++)
+            matrix[i*(nx+nu) + j] = Q[i*nx + j];
+    for (int_t i = 0; i < nx; i++)
+        for (int_t j = 0; j < nu; j++) {
+            matrix[i*(nx+nu) + nx + j] = S[i*nu + j];
+            matrix[(nx+j)*(nx+nu) + i] = S[i*nu + j];
+        }
+    for (int_t i = 0; i < nu; i++)
+        for (int_t j = 0; j < nu; j++)
+            matrix[(nx+i)*(nu+nx) + nx + j] = R[i*nu+j];
+}
+
+static void matrix_to_QSR(int_t nx, int_t nu, real_t *Q, real_t *S, real_t *R,
+                          const real_t *matrix) {
+    for (int_t i = 0; i < nx; i++)
+        for (int_t j = 0; j < nx; j++)
+            Q[i*nx + j] = matrix[i*(nx+nu) + j];
+    for (int_t i = 0; i < nx; i++)
+        for (int_t j = 0; j < nu; j++)
+            S[i*nu + j] = matrix[i*(nx+nu) + nx + j];
+    for (int_t i = 0; i < nu; i++)
+        for (int_t j = 0; j < nu; j++)
+            R[i*nu+j] = matrix[(nx+i)*(nx+nu) + nx + j] ;
+}
+
+static void hessian_regularization(ocp_nlp_eh_sqp_memory *mem) {
+    ocp_qp_in *qp = mem->qp_solver->qp_in;
+    for (int_t i = 0; i <= qp->N; i++) {
+        int_t n = qp->nx[i] + qp->nu[i];
+        real_t matrix[n*n];
+        QSR_to_matrix(qp->nx[i], qp->nu[i], qp->Q[i], qp->S[i], qp->R[i], matrix);
+        regularize(n, matrix);
+        matrix_to_QSR(qp->nx[i], qp->nu[i], (real_t *) qp->Q[i], (real_t *) qp->S[i],
+                      (real_t *) qp->R[i], matrix);
+    }
+}
+
 
 // Simple fixed-step Gauss-Newton based SQP routine
 int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_args_,
@@ -315,6 +333,8 @@ int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
     for (int_t sqp_iter = 0; sqp_iter < max_sqp_iterations; sqp_iter++) {
 
         multiple_shooting(nlp_in, eh_sqp_mem, work->common->w);
+
+        hessian_regularization(eh_sqp_mem);
 
         int_t qp_status = eh_sqp_mem->qp_solver->fun(
             eh_sqp_mem->qp_solver->qp_in,
