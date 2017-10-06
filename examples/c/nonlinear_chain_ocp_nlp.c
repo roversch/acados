@@ -53,7 +53,7 @@ enum sensitivities_scheme {
 static void print_problem_info(enum sensitivities_scheme sensitivities_type,
                                const int_t num_free_masses, const int_t num_stages) {
     char scheme_name[MAX_STR_LEN];
-    switch(sensitivities_type) {
+    switch (sensitivities_type) {
         case EXACT_NEWTON:
             snprintf(scheme_name, sizeof(scheme_name), "EXACT_NEWTON");
             break;
@@ -338,8 +338,8 @@ int main() {
     nlp_args->common->maxIter = 100;
     snprintf(nlp_args->qp_solver_name, sizeof(nlp_args->qp_solver_name), "%s", "hpipm");
 
-    ocp_nlp_eh_sqp_memory *nlp_mem = (ocp_nlp_eh_sqp_memory *) malloc(sizeof(ocp_nlp_eh_sqp_memory));
-    ocp_nlp_memory *nlp_mem_common = (ocp_nlp_memory *) malloc(sizeof(ocp_nlp_memory));
+    ocp_nlp_eh_sqp_memory *nlp_mem = malloc(sizeof(ocp_nlp_eh_sqp_memory));
+    ocp_nlp_memory *nlp_mem_common = malloc(sizeof(ocp_nlp_memory));
     nlp_mem->common = nlp_mem_common;
     ocp_nlp_eh_sqp_create_memory(nlp, nlp_args, nlp_mem);
 

@@ -290,18 +290,19 @@ static void matrix_to_QSR(int_t nx, int_t nu, real_t *Q, real_t *S, real_t *R,
             S[i*nu + j] = matrix[i*(nx+nu) + nx + j];
     for (int_t i = 0; i < nu; i++)
         for (int_t j = 0; j < nu; j++)
-            R[i*nu+j] = matrix[(nx+i)*(nx+nu) + nx + j] ;
+            R[i*nu+j] = matrix[(nx+i)*(nx+nu) + nx + j];
 }
 
 static void hessian_regularization(ocp_nlp_eh_sqp_memory *mem) {
     ocp_qp_in *qp = mem->qp_solver->qp_in;
     for (int_t i = 0; i <= qp->N; i++) {
         int_t n = qp->nx[i] + qp->nu[i];
-        real_t matrix[n*n];
+        real_t *matrix = calloc(n*n, sizeof(real_t));
         QSR_to_matrix(qp->nx[i], qp->nu[i], qp->Q[i], qp->S[i], qp->R[i], matrix);
         regularize(n, matrix);
         matrix_to_QSR(qp->nx[i], qp->nu[i], (real_t *) qp->Q[i], (real_t *) qp->S[i],
                       (real_t *) qp->R[i], matrix);
+        free(matrix);
     }
 }
 

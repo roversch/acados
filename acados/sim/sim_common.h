@@ -40,11 +40,13 @@ typedef struct {
     int_t num_forw_sens;
 
     casadi_function_t vde;
-    void (*forward_vde_wrapper)(const int_t, const int_t, const real_t *, real_t *, casadi_function_t);
+    void (*forward_vde_wrapper)(const int_t, const int_t, const real_t *, real_t *,
+                                casadi_function_t);
     casadi_function_t jac;
     void (*jacobian_wrapper)(const int_t, const real_t *, real_t *, casadi_function_t);
     casadi_function_t vde_adj;
-    void (*adjoint_vde_wrapper)(const int_t, const int_t, const real_t *, real_t *, casadi_function_t);
+    void (*adjoint_vde_wrapper)(const int_t, const int_t, const real_t *, real_t *,
+                                casadi_function_t);
 
     real_t step;
     uint num_steps;
