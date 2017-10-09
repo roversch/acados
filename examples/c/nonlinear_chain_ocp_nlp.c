@@ -179,7 +179,7 @@ void read_final_state(const int_t nx, const int_t num_free_masses, real_t *xN) {
 int main() {
     // TODO(dimitris): fix for NMF > 1
     enum sensitivities_scheme scheme = EXACT_NEWTON;
-    const int NMF = 2;
+    const int NMF = 3;
     const int d = 0;
     print_problem_info(scheme, NMF, d);
 
@@ -359,7 +359,7 @@ int main() {
     int_t status = ocp_nlp_eh_sqp(nlp, nlp_out, nlp_args, nlp_mem, nlp_work);
     printf("\n\nstatus = %i\n\n", status);
 
-    for (int_t k = 0; k <= NN; k++) {
+    for (int_t k = 0; k <= 2; k++) {
         char states_name[MAX_STR_LEN], controls_name[MAX_STR_LEN];
         snprintf(states_name, sizeof(states_name), "x%d", k);
         print_matrix_name("stdout", states_name, nlp_out->x[k], 1, nx[k]);

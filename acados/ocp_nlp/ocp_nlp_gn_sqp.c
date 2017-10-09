@@ -280,6 +280,17 @@ int_t ocp_nlp_gn_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
             return -1;
         }
 
+        real_t inf_norm = 0;
+        for (int_t i = 0; i <= nlp_in->N; i++) {
+            for (int_t j = 0; j < nlp_in->nx[i]; j++)
+                if (fabs(gn_sqp_mem->qp_solver->qp_out->x[i][j]) > inf_norm)
+                    inf_norm = fabs(gn_sqp_mem->qp_solver->qp_out->x[i][j]);
+            for (int_t j = 0; j < nlp_in->nu[i]; j++)
+                if (fabs(gn_sqp_mem->qp_solver->qp_out->u[i][j]) > inf_norm)
+                    inf_norm = fabs(gn_sqp_mem->qp_solver->qp_out->u[i][j]);
+        }
+        printf("Step in iteration %d: %6.2e\n", sqp_iter, inf_norm);
+
         update_variables(nlp_in, gn_sqp_mem, work->common->w);
 
         for (int_t i = 0; i < nlp_in->N; i++) {

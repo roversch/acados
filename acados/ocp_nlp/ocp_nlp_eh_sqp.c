@@ -337,6 +337,8 @@ int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
 
         hessian_regularization(eh_sqp_mem);
 
+        // print_ocp_qp(eh_sqp_mem->qp_solver->qp_in);
+
         int_t qp_status = eh_sqp_mem->qp_solver->fun(
             eh_sqp_mem->qp_solver->qp_in,
             eh_sqp_mem->qp_solver->qp_out,
@@ -349,14 +351,25 @@ int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
             return -1;
         }
 
+        real_t inf_norm = 0;
+        for (int_t i = 0; i <= nlp_in->N; i++) {
+            for (int_t j = 0; j < nlp_in->nx[i]; j++)
+                if (fabs(eh_sqp_mem->qp_solver->qp_out->x[i][j]) > inf_norm)
+                    inf_norm = fabs(eh_sqp_mem->qp_solver->qp_out->x[i][j]);
+            for (int_t j = 0; j < nlp_in->nu[i]; j++)
+                if (fabs(eh_sqp_mem->qp_solver->qp_out->u[i][j]) > inf_norm)
+                    inf_norm = fabs(eh_sqp_mem->qp_solver->qp_out->u[i][j]);
+        }
+        printf("Step in iteration %d: %6.2e\n", sqp_iter, inf_norm);
+
         update_variables(nlp_in, eh_sqp_mem, work->common->w);
 
         for (int_t i = 0; i < nlp_in->N; i++) {
-            sim_RK_opts *opts = (sim_RK_opts*) nlp_in->sim[i].args;
-            nlp_in->sim[i].in->sens_adj = (opts->scheme.type != exact);
-            if (nlp_in->freezeSens) {  // freeze inexact sensitivities after first SQP iteration !!
+            sim_RK_opts *opts = nlp_in->sim[i].args;
+            nlp_in->sim[i].in->sens_adj = (nlp_in->sim[i].in->sens_hess)
+                                                        || (opts->scheme.type != exact);
+            if (nlp_in->freezeSens)  // freeze inexact sensitivities after first SQP iteration !!
                 opts->scheme.freeze = true;
-            }
         }
     }
 
