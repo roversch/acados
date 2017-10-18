@@ -253,6 +253,8 @@ for k = 1:N
    lam = [lam; full(res.lam_g((k-1)*(Ns*nx*d+nx)+Ns*nx*d+1:k*(Ns*nx*d+nx)))];
 end
 
+disp(['lam: ', num2str(lam(1))])
+
 dim = size(casadi_struct2vec(V_block));
 res_split = vertsplit(res.x,dim(1));
 

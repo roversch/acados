@@ -359,11 +359,11 @@ int main() {
     int_t status = ocp_nlp_eh_sqp(nlp, nlp_out, nlp_args, nlp_mem, nlp_work);
     printf("\n\nstatus = %i\n\n", status);
 
-    for (int_t k = 0; k <= 2; k++) {
-        char states_name[MAX_STR_LEN], controls_name[MAX_STR_LEN];
-        snprintf(states_name, sizeof(states_name), "x%d", k);
-        print_matrix_name("stdout", states_name, nlp_out->x[k], 1, nx[k]);
-        snprintf(controls_name, sizeof(controls_name), "u%d", k);
-        print_matrix_name("stdout", controls_name, nlp_out->u[k], 1, nu[k]);
-    }
+    // for (int_t k = 0; k <= nlp->N; k++) {
+    //     char states_name[MAX_STR_LEN], controls_name[MAX_STR_LEN];
+    //     snprintf(states_name, sizeof(states_name), "x%d.txt", k);
+    //     print_matrix(states_name, nlp_out->x[k], 1, nx[k]);
+    //     snprintf(controls_name, sizeof(controls_name), "u%d.txt", k);
+    //     print_matrix(controls_name, nlp_out->u[k], 1, nu[k]);
+    // }
 }

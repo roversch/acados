@@ -10,7 +10,7 @@ d = 4;
 method = '';
 Ns = 3; % NUMBER OF INTEGRATION STEPS
 
-SOLVE = 0;
+SOLVE = 1;
 
 resX = []; resU = [];
 for Nm = 2:10
@@ -97,9 +97,8 @@ vdeFun = Function(['vde_chain_nm' num2str(Nm)],{dae.x,Sx,Sp,dae.p},{dae.ode,vdeX
 jacX = SX.zeros(nx,nx) + jacobian(dae.ode,dae.x);
 jacFun = Function(['jac_chain_nm' num2str(Nm)],{dae.x,dae.p},{dae.ode,jacX});
 
-opts = struct('mex', false);
-vdeFun.generate(['vde_chain_nm' num2str(Nm)], opts);
-jacFun.generate(['jac_chain_nm' num2str(Nm)], opts);
+vdeFun.generate(['vde_chain_nm' num2str(Nm)]);
+jacFun.generate(['jac_chain_nm' num2str(Nm)]);
 
 lambdaX = SX.sym('lambdaX', nx, 1);
 adj = jtimes(dae.ode, [dae.x; u], lambdaX, true);
@@ -118,8 +117,6 @@ end
 
 hessFun = Function(['vde_hess_chain_nm' num2str(Nm)], {dae.x, Sx, Sp, lambdaX, u}, {adj, hess2});
 hessFun.generate(['vde_hess_chain_nm' num2str(Nm)]);
-
-keyboard
 
 out = odeFun(x0_guess,u_guess);
 while norm(full(out)) > 1e-10
@@ -265,7 +262,7 @@ for k=1:N
 %   g = {g{:} coll_out{2}};         % collocation constraints
 %   g = {g{:} Xs{k+1}-coll_out{1}}; % gap closing
 end
-  
+
 V = {V{:} Xs{end}};
 
 % Bounds for final t
@@ -285,9 +282,8 @@ nlpfun = Function('nlp',nlp,char('x','p'),char('f','g'));
 
 % opts.ipopt = struct('linear_solver','ma27');
 % opts.ipopt = struct('acceptable_tol', 1e-10, 'tol', 1e-10);
-opts.ipopt = struct('linear_solver','ma27','acceptable_tol', 1e-12, 'tol', 1e-12);
+opts.ipopt = struct('linear_solver','mumps');%,'acceptable_tol', 1e-12, 'tol', 1e-12);
 solver = nlpsol('solver','ipopt',nlp, opts);
-
 
 args = struct;
 args.x0 = x0;
@@ -296,7 +292,7 @@ args.ubx = vertcat(ubx{:});
 args.lbg = 0;
 args.ubg = 0;
 
-res = solver(args);
+res = solver('x0', x0, 'lbx', vertcat(lbx{:}), 'ubx', vertcat(ubx{:}), 'lbg', 0, 'ubg', 0);
 
 x0 = full(res.x);
 struct_res = res;
@@ -309,6 +305,9 @@ lam = [];
 for k = 1:N
    lam = [lam; full(res.lam_g((k-1)*(Ns*nx*d+nx)+Ns*nx*d+1:k*(Ns*nx*d+nx)))]; 
 end
+
+disp('LAAAAAAAAM')
+lam(1)
 
 dim = size(casadi_struct2vec(V_block));
 res_split = vertsplit(res.x,dim(1));

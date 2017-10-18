@@ -222,21 +222,34 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
 }
 
 
-static void update_variables(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem, real_t *w) {
+static void update_variables(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem, real_t *w, real_t *pi) {
     const int_t N = nlp->N;
     const int_t *nx = nlp->nx;
     const int_t *nu = nlp->nu;
     sim_solver *sim = nlp->sim;
 
+    int_t pi_idx = 0;
     for (int_t i = 0; i < N; i++)
-        for (int_t j = 0; j < nx[i+1]; j++)
-            sim[i].in->S_adj[j] = -mem->qp_solver->qp_out->pi[i][j];
+        for (int_t j = 0; j < nx[i+1]; j++) {
+            pi[pi_idx+j] += mem->qp_solver->qp_out->pi[i][j];
+            pi_idx += nx[i+1];
+        }
+
+    pi_idx = 0;
+    for (int_t i = 0; i < N; i++)
+        for (int_t j = 0; j < nx[i+1]; j++) {
+            sim[i].in->S_adj[j] = -pi[pi_idx+j];
+            pi_idx += nx[i+1];
+        }
+
+    // for (int_t i = 0; i < N; i++)
+    //     for (int_t j = 0; j < nx[i+1]; j++)
+    //         sim[i].in->S_adj[j] = -mem->qp_solver->qp_out->pi[i][j];
 
     int_t w_idx = 0;
     for (int_t i = 0; i <= N; i++) {
-        for (int_t j = 0; j < nx[i]; j++) {
+        for (int_t j = 0; j < nx[i]; j++)
             w[w_idx+j] += mem->qp_solver->qp_out->x[i][j];
-        }
         for (int_t j = 0; j < nu[i]; j++)
             w[w_idx+nx[i]+j] += mem->qp_solver->qp_out->u[i][j];
         w_idx += nx[i]+nu[i];
@@ -302,7 +315,6 @@ static void hessian_regularization(ocp_nlp_eh_sqp_memory *mem) {
         regularize(n, matrix);
         matrix_to_QSR(qp->nx[i], qp->nu[i], (real_t *) qp->Q[i], (real_t *) qp->S[i],
                       (real_t *) qp->R[i], matrix);
-        free(matrix);
     }
 }
 
@@ -311,9 +323,21 @@ static void hessian_regularization(ocp_nlp_eh_sqp_memory *mem) {
 int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_args_,
     void *nlp_mem_, void *nlp_work_) {
 
+    real_t *pi = calloc(nlp_in->N*nlp_in->nx[0], sizeof(real_t));
+
     ocp_nlp_eh_sqp_memory *eh_sqp_mem = (ocp_nlp_eh_sqp_memory *) nlp_mem_;
     ocp_nlp_eh_sqp_work *work = (ocp_nlp_eh_sqp_work*) nlp_work_;
     ocp_nlp_eh_sqp_cast_workspace(work, eh_sqp_mem);
+
+    for (int_t k = 0; k <= nlp_in->N; k++) {
+        char states_name[MAX_STR_LEN], controls_name[MAX_STR_LEN];
+        snprintf(states_name, sizeof(states_name), "x%d.txt", k);
+        read_matrix(states_name, eh_sqp_mem->common->x[k], 1, nlp_in->nx[k]);
+        print_matrix_name("stdout", states_name, eh_sqp_mem->common->x[k], 1, nlp_in->nx[k]);
+        snprintf(controls_name, sizeof(controls_name), "u%d.txt", k);
+        read_matrix(controls_name, eh_sqp_mem->common->u[k], 1, nlp_in->nu[k]);
+        print_matrix_name("stdout", controls_name, eh_sqp_mem->common->u[k], 1, nlp_in->nu[k]);
+    }
 
     initialize_objective(nlp_in, eh_sqp_mem, work);
     initialize_trajectories(nlp_in, eh_sqp_mem, work);
@@ -360,9 +384,10 @@ int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
                 if (fabs(eh_sqp_mem->qp_solver->qp_out->u[i][j]) > inf_norm)
                     inf_norm = fabs(eh_sqp_mem->qp_solver->qp_out->u[i][j]);
         }
-        printf("Step in iteration %d: %6.2e\n", sqp_iter, inf_norm);
 
-        update_variables(nlp_in, eh_sqp_mem, work->common->w);
+        update_variables(nlp_in, eh_sqp_mem, work->common->w, pi);
+
+        printf("Step in iteration %d: %6.2e, pi: %f\n", sqp_iter, inf_norm, eh_sqp_mem->qp_solver->qp_out->pi[0][0]);
 
         for (int_t i = 0; i < nlp_in->N; i++) {
             sim_RK_opts *opts = nlp_in->sim[i].args;
