@@ -220,7 +220,8 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
 }
 
 
-static void update_variables(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem, real_t *w, real_t *pi) {
+static void update_variables(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem, real_t *w,
+                             real_t *pi) {
     const int_t N = nlp->N;
     const int_t *nx = nlp->nx;
     const int_t *nu = nlp->nu;
@@ -368,8 +369,6 @@ int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
         }
 
         update_variables(nlp_in, eh_sqp_mem, work->common->w, pi);
-
-        printf("Step in iteration %d: %6.2e, pi: %f\n", sqp_iter, inf_norm, eh_sqp_mem->qp_solver->qp_out->pi[0][0]);
 
         for (int_t i = 0; i < nlp_in->N; i++) {
             sim_RK_opts *opts = nlp_in->sim[i].args;
