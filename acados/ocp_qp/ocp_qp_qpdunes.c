@@ -429,13 +429,13 @@ ocp_qp_qpdunes_memory *ocp_qp_qpdunes_create_memory(const ocp_qp_in *in, void *a
         if ((nx != in->nx[kk]) || (nu != in->nu[kk])) {
             printf("\nqpDUNES does not support varying dimensions!\n");
             free(mem);
-            return NULL;
+            exit(1);
         }
     }
     if ((nx != in->nx[N]) || (in->nu[N] != 0)) {
         printf("\nqpDUNES does not support varying dimensions!\n");
         free(mem);
-        return NULL;
+        exit(1);
     }
 
     mem->stageQpSolver = define_stage_qp_solver(in);

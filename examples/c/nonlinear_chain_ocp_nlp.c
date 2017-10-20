@@ -27,7 +27,7 @@
 #include "blasfeo/include/blasfeo_i_aux_ext_dep.h"
 
 #include "acados/ocp_nlp/allocate_ocp_nlp.h"
-#include "acados/ocp_nlp/ocp_nlp_eh_sqp.h"
+#include "acados/ocp_nlp/ocp_nlp_gn_sqp.h"
 #include "acados/ocp_qp/ocp_qp_common.h"
 #include "acados/sim/casadi_wrapper.h"
 #include "acados/sim/sim_common.h"
@@ -332,18 +332,18 @@ int main() {
     ocp_nlp_out *nlp_out = (ocp_nlp_out *) malloc(sizeof(ocp_nlp_out));
     allocate_ocp_nlp_out(nlp, nlp_out);
 
-    ocp_nlp_eh_sqp_args *nlp_args = (ocp_nlp_eh_sqp_args *) malloc(sizeof(ocp_nlp_eh_sqp_args));
+    ocp_nlp_gn_sqp_args *nlp_args = (ocp_nlp_gn_sqp_args *) malloc(sizeof(ocp_nlp_gn_sqp_args));
     ocp_nlp_args *nlp_common_args = (ocp_nlp_args *) malloc(sizeof(ocp_nlp_args));
     nlp_args->common = nlp_common_args;
-    nlp_args->common->maxIter = 100;
+    nlp_args->common->maxIter = 10;
     snprintf(nlp_args->qp_solver_name, sizeof(nlp_args->qp_solver_name), "%s", "hpipm");
 
-    ocp_nlp_eh_sqp_memory *nlp_mem = malloc(sizeof(ocp_nlp_eh_sqp_memory));
+    ocp_nlp_gn_sqp_memory *nlp_mem = malloc(sizeof(ocp_nlp_gn_sqp_memory));
     ocp_nlp_memory *nlp_mem_common = malloc(sizeof(ocp_nlp_memory));
     nlp_mem->common = nlp_mem_common;
-    ocp_nlp_eh_sqp_create_memory(nlp, nlp_args, nlp_mem);
+    ocp_nlp_gn_sqp_create_memory(nlp, nlp_args, nlp_mem);
 
-    int_t work_space_size = ocp_nlp_eh_sqp_calculate_workspace_size(nlp, nlp_args);
+    int_t work_space_size = ocp_nlp_gn_sqp_calculate_workspace_size(nlp, nlp_args);
     void *nlp_work = (void *) malloc(work_space_size);
 
     // Initial guess
@@ -356,7 +356,7 @@ int main() {
     for (int_t j = 0; j < NX; j++)
         nlp_mem->common->x[NN][j] = xref[j];
 
-    int_t status = ocp_nlp_eh_sqp(nlp, nlp_out, nlp_args, nlp_mem, nlp_work);
+    int_t status = ocp_nlp_gn_sqp(nlp, nlp_out, nlp_args, nlp_mem, nlp_work);
     printf("\n\nstatus = %i\n\n", status);
 
     // for (int_t k = 0; k <= nlp->N; k++) {

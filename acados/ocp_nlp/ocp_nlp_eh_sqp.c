@@ -163,9 +163,11 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
             for (int_t k = 0; k < nu[i]; k++)
                 qp_S[i][j] = cost->W[i][j*(nx[i]+nu[i]) + nx[i] + k];
         }
-        for (int_t j = nx[i]; j < nx[i]+nu[i]; j++)
-            for (int_t k = nx[i]; k < nx[i]+nu[i]; k++)
-                qp_R[i][j] = cost->W[i][j*(nx[i]+nu[i]) + k];
+        for (int_t j = 0; j < nu[i]; j++) {
+            for (int_t k = 0; k < nu[i]; k++) {
+                qp_R[i][j*nu[i] + k] = cost->W[i][(nx[i] + j)*(nx[i]+nu[i]) + nx[i] + k];
+            }
+        }
 
         for (int_t j = 0; j < nx[i]; j++) {
             for (int_t k = j; k < nx[i]; k++) {
@@ -180,10 +182,8 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
         }
         for (int_t j = 0; j < nx[i]; j++) {
             qp_q[i][j] = 0;
-            for (int_t k = 0; k < nx[i]; k++)
-                qp_q[i][j] += qp_Q[i][j+k*nx[i]] * (w[w_idx+k]-y_ref[i][k]);
-            for (int_t k = 0; k < nu[i]; k++)
-                qp_q[i][j] += qp_S[i][j*nu[i]+k] * (w[w_idx+nx[i]+k]-y_ref[i][nx[i]+k]);
+            for (int_t k = 0; k < nx[i]+nu[i]; k++)
+                qp_q[i][j] += cost->W[i][j+k*(nx[i]+nu[i])] * (w[w_idx+k]-y_ref[i][k]);
             // adjoint-based gradient correction:
             if (opts->scheme.type != exact)
                 qp_q[i][j] += sim[i].out->grad[j];
@@ -197,10 +197,8 @@ static void multiple_shooting(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem,
         }
         for (int_t j = 0; j < nu[i]; j++) {
             qp_r[i][j] = 0;
-            for (int_t k = 0; k < nx[i]; k++)
-                qp_r[i][j] += qp_S[i][j+k*nu[i]] * (w[w_idx+k]-y_ref[i][k]);
-            for (int_t k = 0; k < nu[i]; k++)
-                qp_r[i][j] += qp_R[i][j+k*nu[i]] * (w[w_idx+nx[i]+k]-y_ref[i][nx[i]+k]);
+            for (int_t k = 0; k < nx[i]+nu[i]; k++)
+                qp_r[i][j] += cost->W[i][nx[i]+j+k*(nx[i]+nu[i])] * (w[w_idx+k]-y_ref[i][k]);
             // adjoint-based gradient correction:
             if (opts->scheme.type != exact)
                 qp_r[i][j] += sim[i].out->grad[nx[i]+j];
@@ -231,20 +229,16 @@ static void update_variables(const ocp_nlp_in *nlp, ocp_nlp_eh_sqp_memory *mem, 
     int_t pi_idx = 0;
     for (int_t i = 0; i < N; i++)
         for (int_t j = 0; j < nx[i+1]; j++) {
-            pi[pi_idx+j] += mem->qp_solver->qp_out->pi[i][j];
+            pi[pi_idx+j] = mem->qp_solver->qp_out->pi[i][j];
             pi_idx += nx[i+1];
         }
 
     pi_idx = 0;
     for (int_t i = 0; i < N; i++)
         for (int_t j = 0; j < nx[i+1]; j++) {
-            sim[i].in->S_adj[j] = -pi[pi_idx+j];
+            sim[i].in->S_adj[j] = pi[pi_idx+j];
             pi_idx += nx[i+1];
         }
-
-    // for (int_t i = 0; i < N; i++)
-    //     for (int_t j = 0; j < nx[i+1]; j++)
-    //         sim[i].in->S_adj[j] = -mem->qp_solver->qp_out->pi[i][j];
 
     int_t w_idx = 0;
     for (int_t i = 0; i <= N; i++) {
@@ -329,16 +323,6 @@ int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
     ocp_nlp_eh_sqp_work *work = (ocp_nlp_eh_sqp_work*) nlp_work_;
     ocp_nlp_eh_sqp_cast_workspace(work, eh_sqp_mem);
 
-    for (int_t k = 0; k <= nlp_in->N; k++) {
-        char states_name[MAX_STR_LEN], controls_name[MAX_STR_LEN];
-        snprintf(states_name, sizeof(states_name), "x%d.txt", k);
-        read_matrix(states_name, eh_sqp_mem->common->x[k], 1, nlp_in->nx[k]);
-        print_matrix_name("stdout", states_name, eh_sqp_mem->common->x[k], 1, nlp_in->nx[k]);
-        snprintf(controls_name, sizeof(controls_name), "u%d.txt", k);
-        read_matrix(controls_name, eh_sqp_mem->common->u[k], 1, nlp_in->nu[k]);
-        print_matrix_name("stdout", controls_name, eh_sqp_mem->common->u[k], 1, nlp_in->nu[k]);
-    }
-
     initialize_objective(nlp_in, eh_sqp_mem, work);
     initialize_trajectories(nlp_in, eh_sqp_mem, work);
 
@@ -360,8 +344,6 @@ int_t ocp_nlp_eh_sqp(const ocp_nlp_in *nlp_in, ocp_nlp_out *nlp_out, void *nlp_a
         multiple_shooting(nlp_in, eh_sqp_mem, work->common->w);
 
         hessian_regularization(eh_sqp_mem);
-
-        // print_ocp_qp(eh_sqp_mem->qp_solver->qp_in);
 
         int_t qp_status = eh_sqp_mem->qp_solver->fun(
             eh_sqp_mem->qp_solver->qp_in,

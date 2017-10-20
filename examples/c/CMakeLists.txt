@@ -104,3 +104,7 @@ if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_definitions(linear_mpc_example PRIVATE USE_ACADOS_TYPES)
     add_test(linear_mpc_example linear_mpc_example)
 endif()
+
+add_executable(exact_hessian_example exact_hessian_example.c toy_model/vde_toy.c toy_model/adj_hess_toy.c)
+target_link_libraries(exact_hessian_example acados)
+add_test(exact_hessian_example exact_hessian_example)
