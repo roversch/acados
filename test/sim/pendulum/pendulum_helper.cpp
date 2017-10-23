@@ -41,11 +41,11 @@ void create_ERK_integrator(sim_in* sim_in, sim_out* sim_out,
         sim_in->num_forw_sens = NX+NU;
 
         sim_in->vde = &vde_forw_pendulum;
-        sim_in->VDE_forw = &vde_fun;
+        sim_in->forward_vde_wrapper = &vde_fun;
         if ( hessian ) {
-            sim_in->VDE_adj = &VDE_hess_pendulum;
+            sim_in->adjoint_vde_wrapper = &VDE_hess_pendulum;
         } else {
-            sim_in->VDE_adj = &VDE_adj_pendulum;
+            sim_in->adjoint_vde_wrapper = &VDE_adj_pendulum;
         }
         sim_in->jac = &jac_pendulum;
         sim_in->jac_fun = &jac_fun;
