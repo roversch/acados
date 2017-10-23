@@ -44,7 +44,14 @@ typedef PyObject LangObject;
 %include "ocp_typemaps.i"
 
 %{
+// TODO(dimitris): support compilation with visual studio
+#if (defined _WIN32 || defined _WIN64 || defined __MINGW32__ || defined __MINGW64__)
+#include <windows.h>
+char compiler[16] = "gcc";
+#else
 #include <dlfcn.h>
+char compiler[16] = "cc";
+#endif
 // #include <xmmintrin.h>  // for floating point exceptions
 // _MM_SET_EXCEPTION_MASK(_MM_GET_EXCEPTION_MASK() & ~_MM_MASK_INVALID);
 
@@ -72,7 +79,7 @@ typedef PyObject LangObject;
 
 %{
 
-void *global_handle;
+int global_library_counter = 1;
 
 // static bool is_valid_sim_dimensions_map(const LangObject *input) {
 //     if (!is_map(input))
@@ -104,18 +111,20 @@ static std::string generate_vde_function(casadi::Function& model) {
     casadi::SX u = model.sx_in(1);
     int_t nx = x.size1();
     int_t nu = u.size1();
-    const std::vector<casadi::SX> input = {x, u};
-    casadi::SX rhs = casadi::SX::vertcat(model(input));
+    const std::vector<casadi::SX> states_controls = {x, u};
+    casadi::SX rhs = casadi::SX::vertcat(model(states_controls));
     casadi::SX Sx = casadi::SX::sym("Sx", nx, nx);
     casadi::SX Su = casadi::SX::sym("Su", nx, nu);
     casadi::SX vde_x = casadi::SX::jtimes(rhs, x, Sx);
     casadi::SX vde_u = casadi::SX::jacobian(rhs, u) + casadi::SX::jtimes(rhs, x, Su);
-    const std::vector<casadi::SX> input_vector = {x, Sx, Su, u};
-    const std::vector<casadi::SX> output_vector = {rhs, vde_x, vde_u};
+    const std::vector<casadi::SX> input = {x, Sx, Su, u};
+    const std::vector<casadi::SX> output = {rhs, vde_x, vde_u};
     std::string full_name = std::string("vde_") + model.name();
     std::string generated_file = full_name + std::string(".c");
-    casadi::Function vde = casadi::Function(full_name, input_vector, output_vector);
-    vde.generate(generated_file);
+    casadi::Function vde = casadi::Function(full_name, input, output);
+    casadi::Dict opts;
+    opts["with_header"] = casadi::GenericType(true);
+    vde.generate(generated_file, opts);
     return full_name;
 }
 
@@ -123,16 +132,18 @@ static std::string generate_jac_function(casadi::Function& model) {
     validate_model(model);
     casadi::SX x = model.sx_in(0);
     casadi::SX u = model.sx_in(1);
-    const std::vector<casadi::SX> input = {x, u};
-    casadi::SX rhs = casadi::SX::vertcat(model(input));
+    const std::vector<casadi::SX> states_controls = {x, u};
+    casadi::SX rhs = casadi::SX::vertcat(model(states_controls));
     int_t nx = x.size1();
     casadi::SX jac_x = casadi::SX::zeros(nx, nx) + casadi::SX::jacobian(rhs, x);
-    const std::vector<casadi::SX> input_vector = {x, u};
-    const std::vector<casadi::SX> output_vector = {rhs, jac_x};
+    const std::vector<casadi::SX> input = {x, u};
+    const std::vector<casadi::SX> output = {rhs, jac_x};
     std::string full_name = std::string("jac_") + model.name();
     std::string generated_file = full_name + std::string(".c");
-    casadi::Function jac = casadi::Function(full_name, input_vector, output_vector);
-    jac.generate(generated_file);
+    casadi::Function jac = casadi::Function(full_name, input, output);
+    casadi::Dict opts;
+    opts["with_header"] = casadi::GenericType(true);
+    jac.generate(generated_file, opts);
     return full_name;
 }
 
@@ -142,23 +153,36 @@ enum generation_mode {
 };
 
 static casadi_function_t compile_and_load(std::string name, void **handle) {
-    std::string library_name = name + std::string(".so");
+    std::string library_name = name + std::to_string(global_library_counter++) + std::string(".so");
     std::string path_to_library = std::string("./") + library_name;
     char command[MAX_STR_LEN];
-    snprintf(command, sizeof(command), "cc -fPIC -shared -g %s.c -o %s", name.c_str(),
-                                                                         library_name.c_str());
+    snprintf(command, sizeof(command), "%s -fPIC -shared -g %s.c -o %s", compiler, name.c_str(),
+        library_name.c_str());
     int compilation_failed = system(command);
     if (compilation_failed)
         throw std::runtime_error("Something went wrong when compiling the model.");
+    #if (defined _WIN32 || defined _WIN64 || defined __MINGW32__ || defined __MINGW64__)
+    *handle = LoadLibrary(path_to_library.c_str());
+    #else
     *handle = dlopen(path_to_library.c_str(), RTLD_LAZY);
+    #endif
     if (*handle == NULL) {
         char err_msg[MAX_STR_LEN];
+        #if (defined _WIN32 || defined _WIN64 || defined __MINGW32__ || defined __MINGW64__)
+        snprintf(err_msg, sizeof(err_msg), \
+            "Something went wrong when loading the model.");
+        #else
         snprintf(err_msg, sizeof(err_msg), \
             "Something went wrong when loading the model. dlerror(): %s", dlerror());
+        #endif
         throw std::runtime_error(err_msg);
     }
     typedef int (*casadi_function_t)(const double** arg, double** res, int* iw, double* w, int mem);
+    #if (defined _WIN32 || defined _WIN64 || defined __MINGW32__ || defined __MINGW64__)
+    return (casadi_function_t) GetProcAddress((HMODULE)*handle, name.c_str());
+    #else
     return (casadi_function_t) dlsym(*handle, name.c_str());
+    #endif
 }
 
 void set_model(sim_in *sim, casadi::Function& f, double step, enum generation_mode mode) {
@@ -179,7 +203,7 @@ void set_model(sim_in *sim, casadi::Function& f, double step, enum generation_mo
 LangObject *sim_output(const sim_in *in, const sim_out *out) {
     int_t x_dims[2] = {in->nx, 1};
     LangObject *x_final = new_matrix(x_dims, out->xn);
-    int_t S_dims[2] = {in->nx, in->nx+in->nu};
+    int_t S_dims[2] = {in->num_forw_sens, in->nx+in->nu};
     LangObject *S_forward = new_matrix(S_dims, out->S_forw);
     return new_sim_output_tuple(x_final, S_forward);
 }
@@ -204,10 +228,8 @@ LangObject *sim_output(const sim_in *in, const sim_out *out) {
         }
         sim_solver *solver = (sim_solver *) malloc(sizeof(sim_solver));
         validate_model(model);
-        casadi::SX x = model.sx_in(0);
-        casadi::SX u = model.sx_in(1);
-        int_t nx = x.size1();
-        int_t nu = u.size1();
+        int_t nx = model.sx_in(0).size1();
+        int_t nu = model.sx_in(1).size1();
         sim_in *input = (sim_in *) malloc(sizeof(sim_in));
         input->nx = nx;
         input->nu = nu;
@@ -216,7 +238,7 @@ LangObject *sim_output(const sim_in *in, const sim_out *out) {
         input->sens_hess = false;
         input->num_forw_sens = nx + nu;
         input->num_steps = 10;
-        allocate_sim_in(input);
+        allocate_sim_in(input, order);
 
         sim_out *output = (sim_out *) malloc(sizeof(sim_out));
         allocate_sim_out(input, output);
@@ -233,11 +255,18 @@ LangObject *sim_output(const sim_in *in, const sim_out *out) {
             workspace_size = sim_erk_calculate_workspace_size(input, args);
             workspace = malloc(workspace_size);
             set_model(input, model, time_step / input->num_steps, GENERATE_VDE);
-        } else if (!strcmp("implicit runge-kutta", solver_name) || !strcmp("irk", solver_name)) {
+        } else if (!strcmp("implicit runge-kutta", solver_name) || !strcmp("irk", solver_name)
+                   || !strcmp("in", solver_name) || !strcmp("inis", solver_name)) {
             solver->fun = sim_lifted_irk;
             args = (void *) malloc(sizeof(sim_RK_opts));
-            sim_irk_create_arguments(args, 1, "Gauss");
-            sim_irk_create_Newton_scheme(args, 1, "Gauss", exact);
+            sim_irk_create_arguments(args, 2, "Gauss");
+            if (!strcmp("implicit runge-kutta", solver_name)
+                || !strcmp("irk", solver_name))
+                sim_irk_create_Newton_scheme(args, 2, "Gauss", exact);
+            if (!strcmp("in", solver_name))
+                sim_irk_create_Newton_scheme(args, 2, "Gauss", simplified_in);
+            if (!strcmp("inis", solver_name))
+                sim_irk_create_Newton_scheme(args, 2, "Gauss", simplified_inis);
             memory = (sim_lifted_irk_memory *) malloc(sizeof(sim_lifted_irk_memory));
             sim_lifted_irk_create_memory(input, args, (sim_lifted_irk_memory *) memory);
             workspace_size = sim_lifted_irk_calculate_workspace_size(input, args);
@@ -246,7 +275,6 @@ LangObject *sim_output(const sim_in *in, const sim_out *out) {
         } else {
             throw std::invalid_argument("Integrator name not known!");
         }
-
         solver->in = input;
         solver->out = output;
         solver->args = args;
@@ -512,27 +540,9 @@ real_t **ocp_nlp_in_ls_cost_matrix_get(ocp_nlp_in *nlp) {
     }
 
     void set_model(casadi::Function& f, double step) {
-        char library_name[MAX_STR_LEN], path_to_library[MAX_STR_LEN];
         std::string model_name = generate_vde_function(f);
-        snprintf(library_name, sizeof(library_name), "%s.so", model_name.c_str());
-        snprintf(path_to_library, sizeof(path_to_library), "./%s", library_name);
-        char command[MAX_STR_LEN];
-        snprintf(command, sizeof(command), "cc -fPIC -shared -g %s.c -o %s", \
-            model_name.c_str(), library_name);
-        int compilation_failed = system(command);
-        if (compilation_failed)
-            throw std::runtime_error("Something went wrong when compiling the model.");
-        if (global_handle)
-            dlclose(global_handle);
-        global_handle = dlopen(path_to_library, RTLD_LAZY);
-        if (global_handle == 0) {
-            char err_msg[MAX_STR_LEN];
-            snprintf(err_msg, sizeof(err_msg), \
-                "Something went wrong when loading the model. dlerror(): %s", dlerror());
-            throw std::runtime_error(err_msg);
-        }
-        typedef int (*eval_t)(const double** arg, double** res, int* iw, double* w, int mem);
-        eval_t eval = (eval_t)dlsym(global_handle, model_name.c_str());
+        void *handle = malloc(sizeof(void *));
+        casadi_function_t eval = compile_and_load(model_name, &handle);
         for (int_t i = 0; i < $self->N; i++) {
             $self->sim[i].in->vde = eval;
             $self->sim[i].in->forward_vde_wrapper = &vde_fun;

@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef ACADOS_WITH_HPMPC
 #include "hpmpc/include/aux_d.h"
 
 #include "acados/utils/types.h"
@@ -679,6 +680,9 @@ void expm(int row, double *A) {
         free(temp);
     }
 }
+
+#endif
+
 
 // TODO(dimitris): move this to condensing module once implemented
 // compute the memory size of condensing for [x u] order of bounds (instead of [u x] in hpipm)
