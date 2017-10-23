@@ -139,7 +139,8 @@ void read_initial_state(const int_t nx, const int_t num_free_masses, real_t *x0)
             break;
     }
     for (int_t i = 0; i < nx; i++)
-        fscanf(initial_states_file, "%lf", &x0[i]);
+        if (!fscanf(initial_states_file, "%lf", &x0[i]))
+            break;
     fclose(initial_states_file);
 }
 
@@ -172,7 +173,8 @@ void read_final_state(const int_t nx, const int_t num_free_masses, real_t *xN) {
             break;
     }
     for (int_t i = 0; i < nx; i++)
-        fscanf(final_state_file, "%lf", &xN[i]);
+        if (!fscanf(final_state_file, "%lf", &xN[i]))
+            break;
     fclose(final_state_file);
 }
 
