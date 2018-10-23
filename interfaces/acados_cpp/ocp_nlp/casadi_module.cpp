@@ -13,26 +13,25 @@
 
 #include "acados_cpp/ocp_nlp/dynamic_loading.hpp"
 
+#define casadi_int int
+#define casadi_real double
+
 #include "casadi/mem.h"
 
 namespace acados
 {
-
 casadi_module::casadi_module() : function_(), external_function_(), handle_(nullptr, &free_handle)
 {
-
 }
 
-casadi_module::casadi_module(const casadi::Function& function, std::string output_folder = "tmp") :
-    function_(function), external_function_(), handle_(nullptr, &free_handle)
+casadi_module::casadi_module(const casadi::Function& function, std::string output_folder = "tmp")
+    : function_(function), external_function_(), handle_(nullptr, &free_handle)
 {
     load_functions(output_folder);
 }
 
-casadi_module::casadi_module(casadi_module&& other) :
-    function_(),
-    external_function_(),
-    handle_(nullptr, &free_handle)
+casadi_module::casadi_module(casadi_module&& other)
+    : function_(), external_function_(), handle_(nullptr, &free_handle)
 {
     *this = std::move(other);
 }
@@ -60,12 +59,9 @@ casadi_module& casadi_module::operator=(casadi_module&& other)
     return *this;
 }
 
-casadi_module::~casadi_module()
-{
-    external_function_casadi_free(&external_function_);
-}
+casadi_module::~casadi_module() { external_function_casadi_free(&external_function_); }
 
-const external_function_casadi *casadi_module::as_external_function() const
+const external_function_casadi* casadi_module::as_external_function() const
 {
     return &external_function_;
 }
@@ -76,18 +72,18 @@ void casadi_module::load_functions(std::string output_folder)
 
     handle_.reset(compile_and_load_library(output_folder, function_.name()));
 
-    external_function_.casadi_fun = reinterpret_cast<casadi_eval_t>(
-        load_function(function_.name(), handle_.get()));
-    external_function_.casadi_n_in = reinterpret_cast<casadi_getint_t>(
-        load_function(function_.name() + "_n_in", handle_.get()));
+    external_function_.casadi_fun =
+        reinterpret_cast<casadi_eval_t>(load_function(function_.name(), handle_.get()));
+    external_function_.casadi_n_in =
+        reinterpret_cast<casadi_getint_t>(load_function(function_.name() + "_n_in", handle_.get()));
     external_function_.casadi_n_out = reinterpret_cast<casadi_getint_t>(
         load_function(function_.name() + "_n_out", handle_.get()));
     external_function_.casadi_sparsity_in = reinterpret_cast<casadi_sparsity_t>(
         load_function(function_.name() + "_sparsity_in", handle_.get()));
     external_function_.casadi_sparsity_out = reinterpret_cast<casadi_sparsity_t>(
         load_function(function_.name() + "_sparsity_out", handle_.get()));
-    external_function_.casadi_work = reinterpret_cast<casadi_work_t>(
-        load_function(function_.name() + "_work", handle_.get()));
+    external_function_.casadi_work =
+        reinterpret_cast<casadi_work_t>(load_function(function_.name() + "_work", handle_.get()));
 
     external_function_casadi_create(&external_function_);
 }
@@ -109,14 +105,8 @@ void casadi_module::generate(std::string output_folder)
     chdir("..");
 }
 
-std::string casadi_module::path_to_header()
-{
-    return generated_header_;
-}
+std::string casadi_module::path_to_header() { return generated_header_; }
 
-std::string casadi_module::name()
-{
-    return function_.name();
-}
+std::string casadi_module::name() { return function_.name(); }
 
 }  // namespace acados
