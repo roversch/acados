@@ -58,10 +58,7 @@ endif()
 
 message(STATUS "Installation directory is ${CMAKE_INSTALL_PREFIX}")
 
-# Rpath handling, see https://cmake.org/Wiki/CMake_RPATH_handling#What_is_RPATH_.3F
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH "$ENV{CASADIPATH}/casadi")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if(NOT CMAKE_C_COMPILER_ID MATCHES "MSVC")
     set(ACADOS_WITH_HPMPC ON CACHE BOOL "Add HPMPC solver")
@@ -88,7 +85,7 @@ add_subdirectory(acados)
 add_subdirectory(${EXTERNAL_SRC_DIR})
 
 # Add examples
-if(NOT CMAKE_SYSTEM_NAME MATCHES "dSpace")
+if(ACADOS_WITH_EXAMPLES AND NOT CMAKE_SYSTEM_NAME MATCHES "dSpace")
     add_subdirectory(examples)
 endif()
 
