@@ -77,16 +77,16 @@ void ocp_qp_hpipm_opts_initialize_default(void *config_, void *dims_, void *opts
     // ocp_qp_dims *dims = dims_;
     ocp_qp_hpipm_opts *opts = opts_;
 
-    d_set_default_ocp_qp_ipm_arg(BALANCE, opts->hpipm_opts);
+    d_set_default_ocp_qp_ipm_arg(ROBUST, opts->hpipm_opts);
     // overwrite some default options
-    opts->hpipm_opts->res_g_max = 1e-6;
-    opts->hpipm_opts->res_b_max = 1e-8;
-    opts->hpipm_opts->res_d_max = 1e-8;
-    opts->hpipm_opts->res_m_max = 1e-8;
-    opts->hpipm_opts->iter_max = 50;
-    opts->hpipm_opts->stat_max = 50;
-    opts->hpipm_opts->alpha_min = 1e-8;
-    opts->hpipm_opts->mu0 = 1e0;
+    // opts->hpipm_opts->res_g_max = 1e-6;
+    // opts->hpipm_opts->res_b_max = 1e-6;
+    // opts->hpipm_opts->res_d_max = 1e-6;
+    // opts->hpipm_opts->res_m_max = 1e-6;
+    // opts->hpipm_opts->iter_max = 50;
+    // opts->hpipm_opts->stat_max = 50;
+    // opts->hpipm_opts->alpha_min = 1e-8;
+    // opts->hpipm_opts->mu0 = 1e0;
 
     return;
 }
@@ -171,8 +171,8 @@ int ocp_qp_hpipm(void *config_, void *qp_in_, void *qp_out_, void *opts_, void *
 
     // solve ipm
     acados_tic(&qp_timer);
-    // print_ocp_qp_in(qp_in);
     int hpipm_status = d_solve_ocp_qp_ipm(qp_in, qp_out, opts->hpipm_opts, memory->hpipm_workspace);
+    if (hpipm_status) print_ocp_qp_in(qp_in);
 
     info->solve_QP_time = acados_toc(&qp_timer);
     info->interface_time = 0;  // there are no conversions for hpipm

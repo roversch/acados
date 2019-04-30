@@ -52,7 +52,7 @@ int main()
 	* Initialize
 	************************************************/
 
-    int NREP = 500;
+    int NREP = 10000000;
 
     int ii;
     int jj;
@@ -157,7 +157,7 @@ int main()
 
 	int number_sim_solvers = 3;
 	int nss;
-	for (nss = 0; nss < number_sim_solvers; nss++)
+	for (nss = 1; nss < 2; nss++)
 	{
 		/************************************************
 		* sim plan & config
@@ -207,9 +207,10 @@ int main()
 
 		sim_rk_opts *opts = sim_opts_create(config, dims);
 
-		opts->ns = 4; // number of stages in rk integrator
-		opts->num_steps = 5; // number of integration steps
-		opts->sens_adj = true;
+		opts->ns = 2; // number of stages in rk integrator
+		opts->num_steps = 1; // number of integration steps
+		opts->sens_adj = false;
+		opts->jac_reuse = false;
 
 		/************************************************
 		* sim in / out

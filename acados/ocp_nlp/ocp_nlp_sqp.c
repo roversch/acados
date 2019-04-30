@@ -1076,6 +1076,8 @@ int ocp_nlp_sqp(void *config_, void *dims_, void *nlp_in_, void *nlp_out_,
                                     mem->nlp_res->inf_norm_res_m :
                                     nlp_out->inf_norm_res;
 
+        // printf("sqp iteration %d: KKT :%6e\n", sqp_iter, nlp_out->inf_norm_res);
+
         // exit conditions on residuals
         if ((mem->nlp_res->inf_norm_res_g < opts->min_res_g) &
             (mem->nlp_res->inf_norm_res_b < opts->min_res_b) &

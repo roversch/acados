@@ -342,7 +342,9 @@ void ocp_nlp_cost_ls_initialize(void *config_, void *dims_, void *model_, void *
                        0, 0);
     blasfeo_dsyrk_ln(nu + nx, ny, 1.0, &work->tmp_nv_ny, 0, 0, &work->tmp_nv_ny, 0, 0, 0.0,
                      &memory->hess, 0, 0, &memory->hess, 0, 0);
+    blasfeo_dgecp(nu + nx, nu + nx, &memory->hess, 0, 0, memory->RSQrq, 0, 0);
 
+    blasfeo_dveccp(2 * ns, &model->z, 0, &memory->grad, nu + nx);
     blasfeo_dveccp(2 * ns, &model->Z, 0, memory->Z, 0);
 
     return;

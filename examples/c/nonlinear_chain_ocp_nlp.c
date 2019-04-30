@@ -1143,22 +1143,10 @@ int main()
 	// NOTE(dimitris): switching between different integrators on each stage to test everything
 	for (int i = 0; i < NN; i++)
 	{
-		if (i < NN-4)
-		{
-			plan->nlp_dynamics[i] = CONTINUOUS_MODEL;
-			if (i < 3)
-				plan->sim_solver_plan[i].sim_solver = LIFTED_IRK;
-			else if (i%3 == 0)
-				plan->sim_solver_plan[i].sim_solver = IRK;
-			else if (i%3 == 1)
-				plan->sim_solver_plan[i].sim_solver = ERK;
-			else if (i%3 == 2)
-				plan->sim_solver_plan[i].sim_solver = NEW_LIFTED_IRK;
-		}
-		else
-		{
-			plan->nlp_dynamics[i] = DISCRETE_MODEL;
-		}
+		plan->nlp_dynamics[i] = CONTINUOUS_MODEL;
+		plan->sim_solver_plan[i].sim_solver = IRK;
+
+
 	}
 
 	for (int i = 0; i <= NN; i++)
@@ -1546,7 +1534,7 @@ int main()
 			else if (plan->sim_solver_plan[i].sim_solver == IRK)
 			{
 				sim_opts->ns = 2;
-				sim_opts->jac_reuse = true;
+				sim_opts->jac_reuse = false;
 			}
 		}
     }
