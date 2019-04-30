@@ -53,11 +53,11 @@ static const casadi_int casadi_s3[3] = {0, 0, 0};
 static const casadi_int casadi_s4[21] = {0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /* wt_nx6p2_f_lo_fun_jac_x1k1uz:(i0[8],i1[8],i2[0],i3[2])->(o0[],o1[0x18]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int wt_nx6p2_f_lo_fun_jac_x1k1uz(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int wt_nx6p2_f_lo_fun_jac_x1k1uz(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

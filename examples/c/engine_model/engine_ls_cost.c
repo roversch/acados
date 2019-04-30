@@ -71,7 +71,7 @@ void casadi_fill(casadi_real* x, casadi_int n, casadi_real alpha) {
 }
 
 /* engine_ls_cost:(i0[6])->(o0[7],o1[6x7,8nz]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_int i;
   casadi_real *rr, *ss;
   const casadi_int *cii;
@@ -149,7 +149,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int engine_ls_cost(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int engine_ls_cost(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

@@ -12,7 +12,7 @@ extern "C" {
 #define casadi_int int
 #endif
 
-int constraint(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem);
+int constraint(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem);
 void constraint_incref(void);
 void constraint_decref(void);
 casadi_int constraint_n_in(void);

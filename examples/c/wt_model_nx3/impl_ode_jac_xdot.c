@@ -102,7 +102,7 @@ void casadi_copy(const casadi_real* x, casadi_int n, casadi_real* y) {
 }
 
 /* casadi_impl_ode_jac_xdot:(i0[3],i1[3],i2[4])->(o0[3x3]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real *rr, *ss;
   casadi_real *w0=w+3, *w1=w+6, *w2=w+9;
   /* #0: @0 = zeros(3x3,3nz) */
@@ -120,7 +120,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int casadi_impl_ode_jac_xdot(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int casadi_impl_ode_jac_xdot(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

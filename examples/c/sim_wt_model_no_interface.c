@@ -261,7 +261,7 @@ int main()
 
 		int mem_size = config->memory_calculate_size(config, dims, opts);
 		void *mem_mem = malloc(mem_size);
-		void *mem = config->memory_assign(config, dims, opts, mem_mem);
+		int mem = config->memory_assign(config, dims, opts, mem_mem);
 
 /************************************************
 * sim workspace

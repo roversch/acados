@@ -57,7 +57,7 @@ static const casadi_int casadi_s5[23] = {4, 4, 0, 4, 8, 12, 16, 0, 1, 2, 3, 0, 1
 static const casadi_int casadi_s6[3] = {0, 0, 0};
 
 /* casadi_get_matrices_fun:(i0)->(o0[3x3],o1[3x4],o2[3],o3[3x3],o4[3x3],o5[3x3],o6[3x0],o7[4x4],o8[],o9[3],o10[]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1;
   a0=0.;
   if (res[0]!=0) res[0][0]=a0;
@@ -134,7 +134,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int casadi_get_matrices_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int casadi_get_matrices_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

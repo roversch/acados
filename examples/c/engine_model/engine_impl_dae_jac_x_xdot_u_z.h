@@ -12,7 +12,7 @@ extern "C" {
 #define casadi_int int
 #endif
 
-int engine_impl_dae_jac_x_xdot_u_z(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem);
+int engine_impl_dae_jac_x_xdot_u_z(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem);
 void engine_impl_dae_jac_x_xdot_u_z_incref(void);
 void engine_impl_dae_jac_x_xdot_u_z_decref(void);
 casadi_int engine_impl_dae_jac_x_xdot_u_z_n_in(void);

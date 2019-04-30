@@ -52,7 +52,7 @@ static const casadi_int casadi_s2[6] = {2, 1, 0, 2, 0, 1};
 casadi_real casadi_sq(casadi_real x) { return x*x;}
 
 /* casadi_phi_fun:(i0[4],i1)->(o0[2]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2, a3;
   a0=4.7418203070092001e-02;
   a1=arg[1] ? arg[1][0] : 0;
@@ -81,7 +81,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int casadi_phi_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int casadi_phi_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

@@ -61,7 +61,7 @@ static const casadi_int casadi_s7[31] = {6, 4, 0, 6, 12, 18, 24, 0, 1, 2, 3, 4, 
 static const casadi_int casadi_s8[45] = {6, 6, 0, 6, 12, 18, 24, 30, 36, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5};
 
 /* crane_dae_get_matrices_fun:(i0)->(o0[5x5],o1[5x2],o2[5],o3[5x5],o4[4x5],o5[4x5],o6[4x0],o7[1x2],o8[6x4],o9[5],o10[6x6]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2;
   a0=0.;
   if (res[0]!=0) res[0][0]=a0;
@@ -247,7 +247,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int crane_dae_get_matrices_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int crane_dae_get_matrices_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

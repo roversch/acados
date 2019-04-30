@@ -179,7 +179,7 @@ void casadi_trans(const casadi_real* x, const casadi_int* sp_x, casadi_real* y,
 }
 
 /* f:(i0[18],i1[3])->(o0[18]) */
-static int casadi_f1(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f1(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a10, a11, a12, a13, a14, a2, a3, a4, a5, a6, a7, a8, a9;
   a0=arg[0] ? arg[0][3] : 0;
   if (res[0]!=0) res[0][0]=a0;
@@ -281,7 +281,7 @@ static int casadi_f1(const casadi_real** arg, casadi_real** res, casadi_int* iw,
 }
 
 /* fwd21_f:(i0[18],i1[3],out_o0[18x1,0nz],fwd_i0[18x21],fwd_i1[3x21])->(fwd_o0[18x21]) */
-static int casadi_f2(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f2(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a2, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a3, a30, a31, a32, a33, a34, a35, a36, a37, a38, a39, a4, a5, a6, a7, a8, a9;
   a0=arg[3] ? arg[3][3] : 0;
   if (res[0]!=0) res[0][0]=a0;
@@ -2549,7 +2549,7 @@ static int casadi_f2(const casadi_real** arg, casadi_real** res, casadi_int* iw,
 }
 
 /* casadi_erk4_chain_nm4:(x0[18],p[3])->(xf[18],sensxu[18x21,267nz]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_int i;
   casadi_real **res1=res+2, *rr, *ss;
   const casadi_int *cii;
@@ -4566,7 +4566,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int casadi_erk4_chain_nm4(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int casadi_erk4_chain_nm4(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

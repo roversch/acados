@@ -51,7 +51,7 @@ static const casadi_int casadi_s2[23] = {3, 8, 0, 2, 4, 5, 6, 8, 10, 11, 12, 0, 
 static const casadi_int casadi_s3[5] = {3, 1, 0, 1, 0};
 
 /* inv_pendulum_phi_jac_y_uhat:(i0[8],i1)->(o0[3x8,12nz],o1[3x1,1nz]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2;
   a0=arg[0] ? arg[0][7] : 0;
   if (res[0]!=0) res[0][0]=a0;
@@ -86,7 +86,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int inv_pendulum_phi_jac_y_uhat(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int inv_pendulum_phi_jac_y_uhat(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

@@ -37,7 +37,7 @@ static const casadi_int casadi_s2[6] = {4, 1, 0, 2, 0, 2};
 casadi_real casadi_sq(casadi_real x) { return x*x;}
 
 /* constraint:(i0[4])->(o0,o1[4x1,2nz]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2, a3, a4, a5;
   a0=arg[0] ? arg[0][0] : 0;
   a1=8.0000000000000004e-01;
@@ -68,7 +68,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-int constraint(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+int constraint(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

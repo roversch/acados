@@ -12,7 +12,7 @@ extern "C" {
 #define casadi_int int
 #endif
 
-int position(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem);
+int position(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem);
 void position_incref(void);
 void position_decref(void);
 casadi_int position_n_in(void);

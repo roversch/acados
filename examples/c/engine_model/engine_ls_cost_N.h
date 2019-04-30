@@ -12,7 +12,7 @@ extern "C" {
 #define casadi_int int
 #endif
 
-int engine_ls_cost_N(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem);
+int engine_ls_cost_N(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem);
 void engine_ls_cost_N_incref(void);
 void engine_ls_cost_N_decref(void);
 casadi_int engine_ls_cost_N_n_in(void);

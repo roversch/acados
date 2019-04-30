@@ -232,14 +232,14 @@ void casadi_copy(const casadi_real* x, casadi_int n, casadi_real* y) {
 casadi_real casadi_sq(casadi_real x) { return x*x;}
 
 /* Spline:(x[2])->(f) */
-static int casadi_f1(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f1(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
     if (res[0]) casadi_fill(res[0], 1, 0.0);
     if (res[0]) CASADI_PREFIX(nd_boor_eval)(res[0],2,casadi_c1,casadi_s3,casadi_s2,casadi_s1,casadi_c0,1,arg[0],casadi_s0, 0, iw, w);
   return 0;
 }
 
 /* wt_nx6p2_expl_ode_fun:(i0[8],i1[2],i2)->(o0[8]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real **res1=res+1, *rr, *ss;
   const casadi_real **arg1=arg+3;
   casadi_real w0, *w1=w+17, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, *w13=w+36, w14;
@@ -493,7 +493,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int wt_nx6p2_expl_ode_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int wt_nx6p2_expl_ode_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

@@ -106,7 +106,7 @@ void casadi_trans(const casadi_real* x, const casadi_int* sp_x, casadi_real* y,
 }
 
 /* engine_impl_dae_jac_x_xdot_u_z:(i0[4],i1[4],i2[2],i3[2])->(o0[6x4,10nz],o1[6x4,4nz],o2[6x2,2nz],o3[6x2,6nz]) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_int i;
   casadi_real *rr, *ss, *tt;
   const casadi_int *cii;
@@ -973,7 +973,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int engine_impl_dae_jac_x_xdot_u_z(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int engine_impl_dae_jac_x_xdot_u_z(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

@@ -55,7 +55,7 @@ static const casadi_int casadi_s4[113] = {10, 10, 0, 10, 20, 30, 40, 50, 60, 70,
 static const casadi_int casadi_s5[48] = {8, 5, 0, 8, 16, 24, 32, 40, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
 
 /* inv_pendulum_get_matrices_fun:(i0)->(o0[10x5],o1[10],o2[10x3],o3[10x10],o4[8x5],o5[8x5],o6[8x5],o7,o8,o9[10],o10) */
-static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem) {
+static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2, a3;
   a0=0.;
   if (res[0]!=0) res[0][0]=a0;
@@ -389,7 +389,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   return 0;
 }
 
-CASADI_SYMBOL_EXPORT int inv_pendulum_get_matrices_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, void* mem){
+CASADI_SYMBOL_EXPORT int inv_pendulum_get_matrices_fun(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem){
   return casadi_f0(arg, res, iw, w, mem);
 }
 

@@ -8,14 +8,14 @@ extern "C" {
 #endif
 
 // implicit ODE
-int casadi_impl_ode_fun_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
+int casadi_impl_ode_fun_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
 
 int casadi_impl_ode_fun_chain_nm2_work(int *, int *, int *, int *);
 int casadi_impl_ode_fun_chain_nm3_work(int *, int *, int *, int *);
@@ -65,14 +65,14 @@ int casadi_impl_ode_fun_chain_nm9_n_out();
 
 
 // impl_ode_fun_jac_x_xdot
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
 
 int casadi_impl_ode_fun_jac_x_xdot_chain_nm2_work(int *, int *, int *, int *);
 int casadi_impl_ode_fun_jac_x_xdot_chain_nm3_work(int *, int *, int *, int *);
@@ -120,14 +120,14 @@ int casadi_impl_ode_fun_jac_x_xdot_chain_nm8_n_out();
 int casadi_impl_ode_fun_jac_x_xdot_chain_nm9_n_out();
 
 //
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
 
 int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm2_work(int *, int *, int *, int *);
 int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm3_work(int *, int *, int *, int *);
@@ -175,14 +175,14 @@ int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm8_n_out();
 int casadi_impl_ode_fun_jac_x_xdot_u_chain_nm9_n_out();
 
 //
-int casadi_impl_ode_jac_x_xdot_u_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_jac_x_xdot_u_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_jac_x_xdot_u_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_jac_x_xdot_u_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_jac_x_xdot_u_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_jac_x_xdot_u_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_jac_x_xdot_u_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
-int casadi_impl_ode_jac_x_xdot_u_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, void *mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm2(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm3(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm4(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm5(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm6(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm7(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm8(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
+int casadi_impl_ode_jac_x_xdot_u_chain_nm9(const real_t** arg, real_t** res, int* iw, real_t* w, int mem);
 
 int casadi_impl_ode_jac_x_xdot_u_chain_nm2_work(int *, int *, int *, int *);
 int casadi_impl_ode_jac_x_xdot_u_chain_nm3_work(int *, int *, int *, int *);
