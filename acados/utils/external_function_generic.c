@@ -836,7 +836,7 @@ void external_function_param_casadi_wrapper(void *self, ext_fun_arg_t *type_in, 
     for (jj = 0; jj < fun->np; jj++) fun->args[ii][jj] = fun->p[jj];
 
     // call casadi function
-    fun->casadi_fun((const double **) fun->args, fun->res, fun->iw, fun->w, NULL);
+    fun->casadi_fun((const double **) fun->args, fun->res, fun->iw, fun->w, 0);
 
     for (ii = 0; ii < fun->out_num; ii++)
     {
