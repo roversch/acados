@@ -33,8 +33,10 @@ if(CMAKE_SYSTEM_NAME MATCHES "dSpace")
     set(USE_C99_MATH OFF CACHE BOOL "fmax is not implemented for dSpace.")
 endif()
 
-add_subdirectory(blasfeo)
-add_subdirectory(hpipm)
+# add_subdirectory(blasfeo)
+find_package(blasfeo REQUIRED)
+# add_subdirectory(hpipm)
+find_package(hpipm REQUIRED)
 
 if(ACADOS_WITH_HPMPC)
 	add_subdirectory(hpmpc)
