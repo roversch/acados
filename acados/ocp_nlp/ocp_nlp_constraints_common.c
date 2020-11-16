@@ -24,8 +24,8 @@
 #include <string.h>
 
 // blasfeo
-#include "blasfeo/include/blasfeo_d_aux.h"
-#include "blasfeo/include/blasfeo_d_blas.h"
+#include "blasfeo/blasfeo_d_aux.h"
+#include "blasfeo/blasfeo_d_blas.h"
 // acados
 #include "acados/ocp_qp/ocp_qp_common.h"
 #include "acados/utils/mem.h"

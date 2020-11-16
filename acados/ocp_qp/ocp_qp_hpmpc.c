@@ -23,9 +23,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "blasfeo/include/blasfeo_d_aux.h"
-#include "blasfeo/include/blasfeo_d_blas.h"
-#include "blasfeo/include/blasfeo_v_aux_ext_dep.h"
+#include "blasfeo/blasfeo_d_aux.h"
+#include "blasfeo/blasfeo_d_blas.h"
+#include "blasfeo/blasfeo_v_aux_ext_dep.h"
 
 #include "hpmpc/include/c_interface.h"
 #include "hpmpc/include/lqcp_solvers.h"

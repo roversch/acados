@@ -16,7 +16,7 @@
 
 #include "simstruc.h"
 
-#include "blasfeo/include/blasfeo_d_aux.h"
+#include "blasfeo/blasfeo_d_aux.h"
 
 #include "acados/ocp_nlp/ocp_nlp_cost_ls.h"
 #include "acados/utils/print.h"

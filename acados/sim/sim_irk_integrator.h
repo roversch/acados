@@ -27,7 +27,7 @@ extern "C" {
 #include "acados/sim/sim_common.h"
 #include "acados/utils/types.h"
 
-#include "blasfeo/include/blasfeo_common.h"
+#include "blasfeo/blasfeo_common.h"
 
 typedef struct
 {

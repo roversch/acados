@@ -27,8 +27,8 @@ extern "C" {
 #include <stdio.h>
 
 // blasfeo
-#include "blasfeo/include/blasfeo_d_aux.h"
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_d_aux.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
 
 // TODO(dimitris): probably does not belong here
 typedef struct

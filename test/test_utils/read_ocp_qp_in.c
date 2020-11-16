@@ -26,8 +26,8 @@
 
 #include "acados/ocp_qp/ocp_qp_common.h"
 
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
-#include "blasfeo/include/blasfeo_i_aux_ext_dep.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_i_aux_ext_dep.h"
 
 static void transpose_matrix(real_t *mat, int m, int n)
 {

@@ -23,8 +23,8 @@
 
 // #include <xmmintrin.h>
 
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
-#include "blasfeo/include/blasfeo_i_aux_ext_dep.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_i_aux_ext_dep.h"
 
 #include "acados/ocp_qp/ocp_qp_common.h"
 #include "acados/ocp_qp/ocp_qp_partial_condensing_solver.h"

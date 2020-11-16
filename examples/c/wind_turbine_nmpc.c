@@ -22,8 +22,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
-#include "blasfeo/include/blasfeo_i_aux_ext_dep.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_i_aux_ext_dep.h"
 
 #include "acados_c/external_function_interface.h"
 #include "acados_c/ocp_nlp_interface.h"

@@ -21,16 +21,16 @@
 #include <assert.h>
 
 // blasfeo
-#include "blasfeo/include/blasfeo_d_aux.h"
-#include "blasfeo/include/blasfeo_d_blas.h"
+#include "blasfeo/blasfeo_d_aux.h"
+#include "blasfeo/blasfeo_d_blas.h"
 
 // hpipm
-#include "hpipm/include/hpipm_d_ocp_qp.h"
-#include "hpipm/include/hpipm_d_ocp_qp_dim.h"
-#include "hpipm/include/hpipm_d_ocp_qp_ipm.h"
-#include "hpipm/include/hpipm_d_ocp_qp_kkt.h"
-#include "hpipm/include/hpipm_d_ocp_qp_res.h"
-#include "hpipm/include/hpipm_d_ocp_qp_sol.h"
+#include "hpipm/hpipm_d_ocp_qp.h"
+#include "hpipm/hpipm_d_ocp_qp_dim.h"
+#include "hpipm/hpipm_d_ocp_qp_ipm.h"
+#include "hpipm/hpipm_d_ocp_qp_kkt.h"
+#include "hpipm/hpipm_d_ocp_qp_res.h"
+#include "hpipm/hpipm_d_ocp_qp_sol.h"
 
 // acados
 #include "acados/ocp_qp/ocp_qp_common.h"

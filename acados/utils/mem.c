@@ -23,8 +23,8 @@
 #include <stdlib.h>
 
 // blasfeo
-#include "blasfeo/include/blasfeo_d_aux.h"
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_d_aux.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
 // acados
 #include "acados/utils/mem.h"
 

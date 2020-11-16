@@ -6,9 +6,9 @@
 #include "acados/utils/types.h"
 #include "acados/utils/timing.h"
 
-#include "blasfeo/include/blasfeo_target.h"
-#include "blasfeo/include/blasfeo_common.h"
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_target.h"
+#include "blasfeo/blasfeo_common.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
 
 // make && gcc -g -o tst ../experimental/dimitris/main_ocp_qp.c -I../ -I../external -L ./acados -L ./external/blasfeo -lblasfeo -lacados && ./tst
 

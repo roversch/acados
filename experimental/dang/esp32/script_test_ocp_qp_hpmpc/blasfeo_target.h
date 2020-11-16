@@ -1,4 +1,4 @@
-// acados/external/blasfeo/include/blasfeo_target.h
+// acados/external/blasfeo/blasfeo_target.h
 #ifndef TARGET_GENERIC
 #define TARGET_GENERIC
 #endif

@@ -26,7 +26,7 @@ extern "C" {
 
 #include "acados/ocp_nlp/ocp_nlp_reg_common.h"
 
-#include "blasfeo/include/blasfeo_common.h"
+#include "blasfeo/blasfeo_common.h"
 
 typedef struct {
     double *R;

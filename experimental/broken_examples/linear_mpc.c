@@ -21,9 +21,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "blasfeo/include/blasfeo_target.h"
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
-#include "blasfeo/include/blasfeo_i_aux_ext_dep.h"
+#include "blasfeo/blasfeo_target.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_i_aux_ext_dep.h"
 
 #include "acados/ocp_qp/ocp_qp_common.h"
 #include "acados/ocp_qp/ocp_qp_qpdunes.h"

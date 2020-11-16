@@ -24,10 +24,10 @@
 #include <string.h>
 
 // blasfeo
-#include "blasfeo/include/blasfeo_common.h"
-#include "blasfeo/include/blasfeo_d_blas.h"
+#include "blasfeo/blasfeo_common.h"
+#include "blasfeo/blasfeo_d_blas.h"
 // hpipm
-#include "hpipm/include/hpipm_d_ocp_qp_dim.h"
+#include "hpipm/hpipm_d_ocp_qp_dim.h"
 // acados
 #include "acados/utils/mem.h"
 

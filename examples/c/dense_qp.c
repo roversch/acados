@@ -11,9 +11,9 @@
 #include "acados/utils/mem.h"
 #include "acados_c/dense_qp_interface.h"
 // hpipm
-#include "hpipm/include/hpipm_d_dense_qp_kkt.h"
+#include "hpipm/hpipm_d_dense_qp_kkt.h"
 
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo/blasfeo_d_aux_ext_dep.h"
 
 static dense_qp_res *dense_qp_res_create(dense_qp_dims *dims)
 {

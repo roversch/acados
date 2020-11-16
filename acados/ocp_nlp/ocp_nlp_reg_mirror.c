@@ -24,8 +24,8 @@
 #include "acados/ocp_nlp/ocp_nlp_reg_common.h"
 #include "acados/utils/math.h"
 
-#include "blasfeo/include/blasfeo_d_aux.h"
-#include "blasfeo/include/blasfeo_d_blas.h"
+#include "blasfeo/blasfeo_d_aux.h"
+#include "blasfeo/blasfeo_d_blas.h"
 
 int ocp_nlp_reg_mirror_memory_calculate_size(ocp_nlp_reg_dims *dims)
 {
